@@ -3,3 +3,12 @@ https://www.youtube.com/watch?v=_YYQNpjvvLE
 poate merge sa scoatem un vector din un fisier (100 tweets)
 si alea sunt inca niste featureuri
 
+py.py e un svm amarat, care ia un csv (prima col e clasa/label, restu sunt featureuri)
+FeatureSelection.py scoate featureuri din xmluri
+
+putem sa incercam si cu retelele bayesiene ale lu marius ca sa avem mai mult de prezentat si poate iese ceva interesant de acolo
+knn
+decision tree
+svm
+ann/cnn/deep nn
+
