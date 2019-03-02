@@ -50,7 +50,7 @@ models.append(('QDA',     QuadraticDiscriminantAnalysis()  ))
 f = open("train.csv")
 Features=f.readline().split(',')
 data = np.loadtxt(f,delimiter=",")
-Features.pop(-1)#Primu e clasa
+Features.pop(-1)#ultimu e clasa
 Y=data[:,-1]
 X=data[:, :-1]
 Y= np.transpose([ round(x/2.0+0.1) for x in Y])
