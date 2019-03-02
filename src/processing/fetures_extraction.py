@@ -3,8 +3,10 @@ import pyphen
 
 from nltk.corpus import stopwords
 
-stop_words = stopwords.words('english')
-dic = pyphen.Pyphen(lang='en_UK')
+# stop_words = stopwords.words('english')
+# dic = pyphen.Pyphen(lang='en_UK')
+stop_words = stopwords.words('spanish')
+dic = pyphen.Pyphen(lang='es_ES')
 
 
 def get_features(tweets):
@@ -15,6 +17,10 @@ def get_features(tweets):
     number_of_tags = 0
     number_of_hash_tags = 0
     number_of_syllables = 0
+    number_of_secure_links = 0
+    number_of_unsecure_links = 0
+    number_of_digits = 0
+    number_of_percent = 0
     total_tweets = len(tweets)
 
     for tweet in tweets:
