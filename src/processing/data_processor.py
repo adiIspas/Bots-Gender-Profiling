@@ -2,7 +2,7 @@ import csv
 
 
 def create_csv_dataset(data, columns, dataset_path):
-    with open(dataset_path, 'a+') as file:
+    with open(dataset_path, 'w+') as file:
         writer = csv.writer(file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(columns)
 
