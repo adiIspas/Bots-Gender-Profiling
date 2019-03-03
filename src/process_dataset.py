@@ -10,8 +10,8 @@ from src.processing.fetures_extraction import Features
 dataset = '../data'
 raw = '/raw'
 processed = '/processed'
-# language = 'en'
-language = 'es'
+language = 'en'
+# language = 'es'
 
 dataset_raw_path = dataset + raw + '/' + language + '/'
 dataset_processed_path = dataset + processed + '/' + language + '/'
@@ -28,10 +28,10 @@ file_authors_classes = dataset_raw_path + 'truth.txt'
 authors_classes_train = tr.get_authors_classes(file_authors_classes)
 
 data = []
-columns = ['words_per_tweet', 'characters_per_tweet', 'average_word_len', 'number_of_stop_words', 'number_of_tags',
-           'number_of_hash_tags', 'readability', 'number_of_digits', 'number_of_secure_links',
+columns = ['average_word_len', 'number_of_tags',
+           'number_of_hash_tags', 'number_of_digits', 'number_of_secure_links',
            'number_of_unsecured_links', 'number_of_percent', 'number_of_exclamation_marks', 'number_of_question_marks',
-           'number_of_commas', 'number_of_points', 'number_of_male_terms', 'number_of_female_terms', 'number_of_emoji',
+           'number_of_commas', 'number_of_points', 'number_of_male_terms', 'number_of_female_terms',
            'author_class']
 
 fe = Features(language)
