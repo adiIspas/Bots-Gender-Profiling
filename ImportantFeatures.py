@@ -9,17 +9,20 @@ from sklearn.feature_selection import VarianceThreshold
 import datetime
 print(datetime.datetime.now())
 
-f = open("x_features.txt")
-# f = open("C:\\Users\\One\\Desktop\\pan19-author-profiling-training-2019-02-18\\en\\x_features.txt")
-# f = open("F:\\Personal\\bricks\\mabri\\dateleu.out")
-# f = open("C:\\Users\\One\\Desktop\\mean\\1-20.out")
+# f = open("x_features.txt")
+# Features=f.readline().split(',')
+# data = np.loadtxt(f,delimiter=",")
+# Y=data[:,0]
+# X=data[:,1:]
+# Features.pop(0)#Primu e clasa
+
+f = open("train.csv")
 Features=f.readline().split(',')
-Features.pop(0)#Primu e clasa
-
-
 data = np.loadtxt(f,delimiter=",")
-Y=data[:,0]
-X=data[:,1:]
+Features.pop(-1)#ultimu e clasa
+Y=data[:,-1]
+X=data[:, :-1]
+Y= np.transpose([ round(x/2.0+0.1) for x in Y])
 
 
 BestOfAll=np.full(len(Features),True,dtype=bool)
@@ -35,19 +38,19 @@ for idx, val in enumerate(sel.get_support()):
 		print(Features[idx])
 		
 		
-		
-print("\n\nChi2")
-from sklearn.feature_selection import SelectKBest,chi2
-sel = SelectKBest(chi2, k= round(len(Features)/2))
-sel.fit_transform(X,Y)
-print(sel.get_support())
-BestOfAll=np.logical_and(BestOfAll,sel.get_support())
-for idx, val in enumerate(sel.get_support()):
-	if(val):
-		print(Features[idx])		
+# nu ii plac valori negative :(	
+# print("\n\nChi2")
+# from sklearn.feature_selection import SelectKBest,chi2
+# sel = SelectKBest(chi2, k= round(len(Features)/2))
+# sel.fit_transform(X,Y)
+# print(sel.get_support())
+# BestOfAll=np.logical_and(BestOfAll,sel.get_support())
+# for idx, val in enumerate(sel.get_support()):
+	# if(val):
+		# print(Features[idx])		
 		
 print("\n\nf_classif")
-from sklearn.feature_selection import f_classif
+from sklearn.feature_selection import SelectKBest,f_classif
 sel = SelectKBest(f_classif, k= round(len(Features)/2))
 sel.fit_transform(X,Y)
 print(sel.get_support())
