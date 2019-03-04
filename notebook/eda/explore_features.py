@@ -40,4 +40,10 @@ def feature_importance(print_plot=True):
     return indices
 
 
+def feature_selection():
+    # https://scikit-learn.org/dev/modules/feature_selection.html
+    pass
+
+
 feature_importance()
+feature_selection()
