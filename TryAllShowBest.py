@@ -64,7 +64,7 @@ std = np.std([tree.feature_importances_ for tree in forest.estimators_],axis=0)
 indices = np.argsort(importances)[::-1]
 
 
-X=normalize(X)
+# X=normalize(X)
 
 #https://markhneedham.com/blog/2013/11/06/python-generate-all-combinations-of-a-list/
 # import itertools as it
@@ -78,8 +78,8 @@ results = []
 names = []
 Subfeatures = []
 mods = []
-# for i in range(1,len(Features),round(len(Features)/3)):
-for i in range(6,7):
+for i in range(1,len(Features)):
+# for i in range(6,7):
 	for name, model in models:
 		#https://stackoverflow.com/questions/8386675/extracting-specific-columns-in-numpy-array
 		subset=indices[0:i]
@@ -108,7 +108,7 @@ names=np.array(names)[BestIndex]
 
 #https://datascience.stackexchange.com/questions/37899/sklearn-svm-how-to-get-a-list-of-the-wrong-predictions
 inds = np.arange(Y.shape[0])
-X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.1,
+X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.2,
                                                                          random_state=42)
 model_0=np.array(mods)[0]
 model_1=np.array(mods)[1]
