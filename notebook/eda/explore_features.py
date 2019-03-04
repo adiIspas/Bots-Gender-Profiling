@@ -45,5 +45,11 @@ def feature_selection():
     pass
 
 
+def others_methods():
+    # https://scikit-learn.org/stable/auto_examples/#
+    pass
+
+
 feature_importance()
 feature_selection()
+others_methods()
