@@ -79,7 +79,7 @@ names = []
 Subfeatures = []
 mods = []
 for i in range(1,len(Features)):
-# for i in range(6,7):
+# for i in range(1,3):
 	for name, model in models:
 		#https://stackoverflow.com/questions/8386675/extracting-specific-columns-in-numpy-array
 		subset=indices[0:i]
@@ -101,41 +101,47 @@ for i in range(1,len(Features)):
 BestIndex=np.array([x.mean() for x in results]).argsort()[::-1][:10]
 results=np.array(results)[BestIndex]
 names=np.array(names)[BestIndex]
+Subfeatures=np.array(Subfeatures)[BestIndex]
+
+print(list(zip(names.tolist(),Subfeatures.tolist())))
 
 
 
-
-
-#https://datascience.stackexchange.com/questions/37899/sklearn-svm-how-to-get-a-list-of-the-wrong-predictions
-inds = np.arange(Y.shape[0])
-X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.2,
-                                                                         random_state=42)
-model_0=np.array(mods)[0]
-model_1=np.array(mods)[1]
-model_2=np.array(mods)[2]
-classifier_0=model_0.fit(X_train, y_train)
-classifier_1=model_1.fit(X_train, y_train)
-classifier_2=model_2.fit(X_train, y_train)
-predictions_0 = model_0.predict(X_test)
-predictions_1 = model_1.predict(X_test)
-predictions_2 = model_2.predict(X_test)
+# #https://datascience.stackexchange.com/questions/37899/sklearn-svm-how-to-get-a-list-of-the-wrong-predictions
+# inds = np.arange(Y.shape[0])
+# X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.2,
+                                                                         # random_state=42)
+# model_0=np.array(mods)[0]
+# model_1=np.array(mods)[1]
+# model_2=np.array(mods)[2]
+# classifier_0=model_0.fit(X_train, y_train)
+# classifier_1=model_1.fit(X_train, y_train)
+# classifier_2=model_2.fit(X_train, y_train)
+# predictions_0 = model_0.predict(X_test)
+# predictions_1 = model_1.predict(X_test)
+# predictions_2 = model_2.predict(X_test)
 
 
 
-for input, p0,p1,p2, label in zip (inds[idx_train], predictions_0,predictions_1,predictions_2, y_test):
-  prediction = round((p0+p1+p2)/3.0)
-  if prediction != label:
-    print(input+1, 'has been classified as ', prediction, 'and should be ', label)
+# for input, p0,p1,p2, label in zip (inds[idx_train], predictions_0,predictions_1,predictions_2, y_test):
+  # prediction = round((p0+p1+p2)/3.0)
+  # if prediction != label:
+    # print(input+1, 'has been classified as ', prediction, 'and should be ', label)
 
-preds=(predictions_0+predictions_1+predictions_2)
-print( (predictions_0==y_test).mean()  )
-print( (predictions_1==y_test).mean()  )
-print( (predictions_2==y_test).mean()  )
-print( (([round(x/3.0) for x in preds])==y_test).mean() )
+# preds=(predictions_0+predictions_1+predictions_2)
+# print( (predictions_0==y_test).mean()  )
+# print( (predictions_1==y_test).mean()  )
+# print( (predictions_2==y_test).mean()  )
+# print( (([round(x/3.0) for x in preds])==y_test).mean() )
 	
-from sklearn.metrics import confusion_matrix
-tn, fp, fn, tp = confusion_matrix(y_test,([round(x/3.0) for x in preds]) ).ravel()
-print (tn, fp, fn, tp)
+# from sklearn.metrics import confusion_matrix
+# tn, fp, fn, tp = confusion_matrix(y_test,([round(x/3.0) for x in preds]) ).ravel()
+# print (tn, fp, fn, tp)
+
+
+
+
+
 
 # boxplot algorithm comparison
 fig = plt.figure()
@@ -144,5 +150,4 @@ ax = fig.add_subplot(111)
 plt.boxplot(results.tolist())
 ax.set_xticklabels(names)
 plt.show()
-
 
