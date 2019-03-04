@@ -31,7 +31,7 @@ features_name = csv_file.readline().split(',')
 features_name.pop(-1)
 data = np.loadtxt(csv_file, delimiter=",")
 
-# features_indexes = [2, 4, 5, 7, 8, 9, 10, 11, 13, 14, 15, 16]  # specified feature
+# features_indexes = [2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]  # specified feature
 # X = data[:, features_indexes]  # specified feature
 X = data[:, :-1]
 
