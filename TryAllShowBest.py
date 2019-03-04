@@ -8,6 +8,9 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from matplotlib.colors import ListedColormap
+
+from sklearn.preprocessing import normalize
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_moons, make_circles, make_classification
@@ -20,15 +23,10 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 models = []
 models.append(('LR', LogisticRegression()))
 models.append(('LDA', LinearDiscriminantAnalysis()))
-models.append(('KNN', KNeighborsClassifier()))
-models.append(('CART', DecisionTreeClassifier()))
-models.append(('NB', GaussianNB()))
-models.append(('SVM', SVC()))
-
-models.append(('Knn2',     KNeighborsClassifier(3) ))
-models.append(('LSVM',     SVC(kernel="linear", C=0.025)  ))
-models.append(('RBF SVM',     SVC(gamma=2, C=1)  ))
-# models.append(('Gaussian Process',     GaussianProcessClassifier(1.0 * RBF(1.0)) ))
+models.append(('Knn3',     KNeighborsClassifier(3) ))
+models.append(('Knn5',     KNeighborsClassifier(5) ))
+models.append(('LSVM',     SVC(kernel="linear")  ))
+models.append(('RBF',     SVC()  ))
 models.append(('DT',     DecisionTreeClassifier(max_depth=5) ))
 models.append(('RF',     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1) ))
 models.append(('NN',     MLPClassifier(alpha=1) ))
@@ -56,20 +54,80 @@ X=data[:, :-1]
 Y= np.transpose([ round(x/2.0+0.1) for x in Y])
 
 
+
+#https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
+from sklearn.ensemble import ExtraTreesClassifier
+forest = ExtraTreesClassifier(n_estimators=250,random_state=0)
+forest.fit(X, Y)
+importances = forest.feature_importances_
+std = np.std([tree.feature_importances_ for tree in forest.estimators_],axis=0)
+indices = np.argsort(importances)[::-1]
+
+
+# X=normalize(X)
+
+#https://markhneedham.com/blog/2013/11/06/python-generate-all-combinations-of-a-list/
+# import itertools as it
+# Index=list(range(0,len(Features)))
+# all_the_features = []
+# for r in range(1, len(Index) + 1):
+	# all_the_features +=list(it.combinations(Index, r))
+
+
 results = []
 names = []
-scoring = 'accuracy'
-for name, model in models:
-	kfold = model_selection.StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
-	cv_results = model_selection.cross_val_score(model, X, Y, cv=kfold, scoring=scoring)
-	results.append(cv_results)
-	names.append(name)
-	msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-	print(msg)
+Subfeatures = []
+mods = []
+# for i in range(1,len(Features),round(len(Features)/3)):
+for i in range(6,7):
+	for name, model in models:
+		#https://stackoverflow.com/questions/8386675/extracting-specific-columns-in-numpy-array
+		subset=indices[0:i]
+		XTemp=X[:,subset]
+		kfold = model_selection.StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+		cv_results = model_selection.cross_val_score(model, XTemp, Y, cv=kfold, scoring='accuracy')
+		
+		results.append(cv_results)
+		names.append(name)
+		Subfeatures.append(subset)
+		mods.append(model)
+		
+		msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+		ma=cv_results.mean()
+		print(subset,msg)
+			
+
+#index of best n results :  https://stackoverflow.com/questions/6910641/how-do-i-get-indices-of-n-maximum-values-in-a-numpy-array
+BestIndex=np.array([x.mean() for x in results]).argsort()[::-1][:10]
+results=np.array(results)[BestIndex]
+names=np.array(names)[BestIndex]
+
+
+
+
+
+#https://datascience.stackexchange.com/questions/37899/sklearn-svm-how-to-get-a-list-of-the-wrong-predictions
+inds = np.arange(Y.shape[0])
+X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.3,
+                                                                         random_state=42)
+model=np.array(mods)[0]
+classifier=model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+
+for input, prediction, label in zip (inds[idx_train], predictions, y_test):
+  if prediction != label:
+    print(input, 'has been classified as ', prediction, 'and should be ', label)
+
+	
+	
+
 # boxplot algorithm comparison
 fig = plt.figure()
 fig.suptitle('Algorithm Comparison')
 ax = fig.add_subplot(111)
-plt.boxplot(results)
+plt.boxplot(results.tolist())
 ax.set_xticklabels(names)
 plt.show()
+
+
+
