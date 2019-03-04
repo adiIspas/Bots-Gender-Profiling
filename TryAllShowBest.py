@@ -8,6 +8,9 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from matplotlib.colors import ListedColormap
+
+from sklearn.preprocessing import normalize
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_moons, make_circles, make_classification
@@ -16,27 +19,24 @@ from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
 
 models = []
-models.append(('LR', LogisticRegression(solver='lbfgs')))
+models.append(('LR', LogisticRegression()))
 models.append(('LDA', LinearDiscriminantAnalysis()))
-models.append(('KNN', KNeighborsClassifier()))
-models.append(('CART', DecisionTreeClassifier()))
-models.append(('NB', GaussianNB()))
-models.append(('SVM', SVC(gamma='scale')))
+models.append(('Knn3',     KNeighborsClassifier(3) ))
+models.append(('Knn5',     KNeighborsClassifier(5) ))
+models.append(('LSVM',     SVC(kernel="linear")  ))
+models.append(('RBF',     SVC()  ))
+models.append(('DT',     DecisionTreeClassifier(max_depth=5) ))
+models.append(('RF',     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1) ))
+models.append(('NN',     MLPClassifier(alpha=1) ))
+models.append(('AB',     AdaBoostClassifier() ))
+models.append(('NB',     GaussianNB() ))
+models.append(('QDA',     QuadraticDiscriminantAnalysis()  ))
 
-models.append(('Knn2', KNeighborsClassifier(4)))
-models.append(('LSVM', SVC(gamma='scale', kernel="linear", C=0.025)))
-models.append(('RBF SVM', SVC(gamma=1.6, C=3.5, tol=0.1)))
-models.append(('Gaussian Process', GaussianProcessClassifier(1.0 * RBF(1.0))))
-models.append(('DT', DecisionTreeClassifier(max_depth=5)))
-models.append(('RF', RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)))
-models.append(('NN', MLPClassifier(alpha=1)))
-models.append(('AB', AdaBoostClassifier()))
-models.append(('NB', GaussianNB()))
-models.append(('QDA', QuadraticDiscriminantAnalysis()))
+
+
+
 
 # f = open("x_features.txt")
 # Features=f.readline().split(',')
@@ -45,84 +45,89 @@ models.append(('QDA', QuadraticDiscriminantAnalysis()))
 # X=data[:,1:]
 # Features.pop(0)#Primu e clasa
 
-f = open("./data/processed/en/en_data.csv")
-Features = f.readline().split(',')
-data = np.loadtxt(f, delimiter=",")
-Features.pop(-1)  # ultimu e clasa
-Y = data[:, -1]
-X = data[:, :-1]
-Y = np.transpose([round(x / 2.0 + 0.1) for x in Y])
-# Y = [round(x / 2.0 + 0.1) for x in Y]
+f = open("train.csv")
+Features=f.readline().split(',')
+data = np.loadtxt(f,delimiter=",")
+Features.pop(-1)#ultimu e clasa
+Y=data[:,-1]
+X=data[:, :-1]
+Y= np.transpose([ round(x/2.0+0.1) for x in Y])
+
+
+
+#https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
+from sklearn.ensemble import ExtraTreesClassifier
+forest = ExtraTreesClassifier(n_estimators=250,random_state=0)
+forest.fit(X, Y)
+importances = forest.feature_importances_
+std = np.std([tree.feature_importances_ for tree in forest.estimators_],axis=0)
+indices = np.argsort(importances)[::-1]
+
+
+# X=normalize(X)
+
+#https://markhneedham.com/blog/2013/11/06/python-generate-all-combinations-of-a-list/
+# import itertools as it
+# Index=list(range(0,len(Features)))
+# all_the_features = []
+# for r in range(1, len(Index) + 1):
+	# all_the_features +=list(it.combinations(Index, r))
+
 
 results = []
 names = []
-scoring = 'accuracy'
-for name, model in models:
-    kfold = model_selection.StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
-    cv_results = model_selection.cross_val_score(model, X, Y, cv=kfold, scoring=scoring)
-    results.append(cv_results)
-    names.append(name)
-    msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-    print(msg)
+Subfeatures = []
+mods = []
+# for i in range(1,len(Features),round(len(Features)/3)):
+for i in range(6,7):
+	for name, model in models:
+		#https://stackoverflow.com/questions/8386675/extracting-specific-columns-in-numpy-array
+		subset=indices[0:i]
+		XTemp=X[:,subset]
+		kfold = model_selection.StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+		cv_results = model_selection.cross_val_score(model, XTemp, Y, cv=kfold, scoring='accuracy')
+		
+		results.append(cv_results)
+		names.append(name)
+		Subfeatures.append(subset)
+		mods.append(model)
+		
+		msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+		ma=cv_results.mean()
+		print(subset,msg)
+			
+
+#index of best n results :  https://stackoverflow.com/questions/6910641/how-do-i-get-indices-of-n-maximum-values-in-a-numpy-array
+BestIndex=np.array([x.mean() for x in results]).argsort()[::-1][:10]
+results=np.array(results)[BestIndex]
+names=np.array(names)[BestIndex]
+
+
+
+
+
+#https://datascience.stackexchange.com/questions/37899/sklearn-svm-how-to-get-a-list-of-the-wrong-predictions
+inds = np.arange(Y.shape[0])
+X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.3,
+                                                                         random_state=42)
+model=np.array(mods)[0]
+classifier=model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+
+for input, prediction, label in zip (inds[idx_train], predictions, y_test):
+  if prediction != label:
+    print(input, 'has been classified as ', prediction, 'and should be ', label)
+
+	
+	
+
 # boxplot algorithm comparison
 fig = plt.figure()
 fig.suptitle('Algorithm Comparison')
 ax = fig.add_subplot(111)
-plt.boxplot(results)
+plt.boxplot(results.tolist())
 ax.set_xticklabels(names)
 plt.show()
 
-# clf = SVC(gamma=1.6, C=3.5, tol=0.1)
-# results = []
-# for i in range(0, 100):
-#     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3)
-#
-#     clf.fit(X_train, y_train)
-#     results.append(clf.score(X_test, y_test))
-#
-# results = sorted(results)
-# plt.plot(results)
-# plt.title('Accuracy evolution')
-# plt.show()
-# print('Min accuracy', min(results))
-# print('Mean accuracy after', len(results), 'iterations is ', np.mean(results))
-# print('Max accuracy', max(results))
 
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3)
 
-reduced_data = PCA(n_components=2).fit_transform(X)
-kmeans = KMeans(init='k-means++', n_clusters=2, n_init=10)
-kmeans.fit(reduced_data)
-cmap_bold = ListedColormap(['#FF0000', '#00FF00'])
-# Step size of the mesh. Decrease to increase the quality of the VQ.
-h = .02     # point in the mesh [x_min, x_max]x[y_min, y_max].
-
-# Plot the decision boundary. For that, we will assign a color to each
-x_min, x_max = reduced_data[:, 0].min() - 1, reduced_data[:, 0].max() + 1
-y_min, y_max = reduced_data[:, 1].min() - 1, reduced_data[:, 1].max() + 1
-xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
-
-# Obtain labels for each point in mesh. Use last trained model.
-Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
-
-# Put the result into a color plot
-Z = Z.reshape(xx.shape)
-plt.figure(1)
-plt.clf()
-plt.imshow(Z, interpolation='nearest',
-           extent=(xx.min(), xx.max(), yy.min(), yy.max()),
-           cmap=plt.cm.Paired,
-           aspect='auto', origin='lower')
-
-plt.plot(reduced_data[:, 0], reduced_data[:, 1], 'k.', markersize=7)
-# Plot the centroids as a white X
-centroids = kmeans.cluster_centers_
-plt.scatter(centroids[:, 0], centroids[:, 1],
-            marker='x', s=169, linewidths=3,
-            color='w', zorder=10)
-plt.title('K-means')
-plt.xlim(x_min, x_max)
-plt.ylim(y_min, y_max)
-plt.xticks(())
-plt.yticks(())
-plt.show()
