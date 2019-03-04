@@ -17,13 +17,13 @@ class Features(object):
         self.stemmer = SnowballStemmer(self.languages_name_dict.get(language))
 
     def extract(self, tweets):
-        # number_of_words = 0
-        # number_of_characters = 0
+        number_of_words = 0
+        number_of_characters = 0
         average_word_len = 0
-        # number_of_stop_words = 0
+        number_of_stop_words = 0
         number_of_tags = 0
         number_of_hash_tags = 0
-        # number_of_syllables = 0
+        number_of_syllables = 0
         number_of_secure_links = 0
         number_of_unsecured_links = 0
         number_of_digits = 0
@@ -34,18 +34,18 @@ class Features(object):
         number_of_points = 0
         number_of_male_terms = 0
         number_of_female_terms = 0
-        # number_of_emoji = 0
+        number_of_emoji = 0
 
         total_tweets = len(tweets)
 
         for tweet in tweets:
-            # number_of_words += self.number_of_words_per_tweet(tweet)
-            # number_of_characters += self.number_of_characters_per_tweet(tweet)
+            number_of_words += self.number_of_words_per_tweet(tweet)
+            number_of_characters += self.number_of_characters_per_tweet(tweet)
             average_word_len += self.average_word_len_per_tweet(tweet)
-            # number_of_stop_words += self.number_of_stop_words_per_tweet(tweet)
+            number_of_stop_words += self.number_of_stop_words_per_tweet(tweet)
             number_of_tags += self.number_of_tags_per_tweet(tweet)
             number_of_hash_tags += self.number_of_hash_tags_per_tweet(tweet)
-            # number_of_syllables += self.number_of_syllables_per_tweet(tweet)
+            number_of_syllables += self.number_of_syllables_per_tweet(tweet)
             number_of_digits += self.number_of_digits_per_tweet(tweet)
             number_of_secure_links += self.number_of_secure_links_per_tweet(tweet)
             number_of_unsecured_links += self.number_of_unsecured_links_per_tweet(tweet)
@@ -56,16 +56,16 @@ class Features(object):
             number_of_points += self.number_of_points_per_tweet(tweet)
             number_of_male_terms += self.number_of_male_terms_per_tweet(tweet)
             number_of_female_terms += self.number_of_female_terms_per_tweet(tweet)
-            # number_of_emoji += self.number_of_emoji_per_tweet(tweet)
+            number_of_emoji += self.number_of_emoji_per_tweet(tweet)
 
-        # average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
-        # number_of_words = number_of_words / total_tweets
-        # number_of_characters = number_of_characters / total_tweets
+        average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
+        number_of_words = number_of_words / total_tweets
+        number_of_characters = number_of_characters / total_tweets
         average_word_len = average_word_len / total_tweets
-        # number_of_stop_words = number_of_stop_words / total_tweets
+        number_of_stop_words = number_of_stop_words / total_tweets
         number_of_tags = number_of_tags / total_tweets
         number_of_hash_tags = number_of_hash_tags / total_tweets
-        # readability = self.readability_level(number_of_words, average_number_of_syllables_per_word)
+        readability = self.readability_level(number_of_words, average_number_of_syllables_per_word)
         number_of_digits = number_of_digits / total_tweets
         number_of_secure_links = number_of_secure_links / total_tweets
         number_of_unsecured_links = number_of_unsecured_links / total_tweets
@@ -76,12 +76,12 @@ class Features(object):
         number_of_points = number_of_points / total_tweets
         number_of_male_terms = number_of_male_terms / total_tweets
         number_of_female_terms = number_of_female_terms / total_tweets
-        # number_of_emoji = number_of_emoji / total_tweets
+        number_of_emoji = number_of_emoji / total_tweets
 
-        return [average_word_len, number_of_tags,
-                number_of_hash_tags, number_of_digits, number_of_secure_links, number_of_unsecured_links,
+        return [number_of_words, number_of_characters, average_word_len, number_of_stop_words, number_of_tags,
+                number_of_hash_tags, readability, number_of_digits, number_of_secure_links, number_of_unsecured_links,
                 number_of_percent, number_of_exclamation_marks, number_of_question_marks, number_of_commas,
-                number_of_points, number_of_male_terms, number_of_female_terms]
+                number_of_points, number_of_male_terms, number_of_female_terms, number_of_emoji]
 
     def number_of_syllables_per_tweet(self, tweet):
         number_of_syllables = 0
