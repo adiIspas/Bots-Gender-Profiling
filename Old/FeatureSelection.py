@@ -50,15 +50,17 @@ for line in lines:
 		fout.write("%d\n" % Length)
 
 		
-
+print("Pas 1")
 strOm=strF+" "+strM
 strF=strF.lower()
 strM=strM.lower()
 
+print("Pas 2")
 strBot=strBot.lower()
 strOm=strOm.lower()
 
 
+print("Pas 3")
 str_listF=re.findall(r"[\w']+", strF)
 str_listM=re.findall(r"[\w']+", strM)
 
@@ -66,6 +68,7 @@ str_listBot=re.findall(r"[\w']+", strBot)
 str_listOm=re.findall(r"[\w']+", strOm)
 
 
+print("Pas 4")
 
 #Daca faci asta e si bine, e si rau:
 #E bine ca pui la un loc game, games si astfel au importanta mai mare si gasesti mai multe cuvinte diferite/utile (gen nu era la baieti "cunt" fara stemming)
@@ -83,6 +86,7 @@ str_listM= [ps.stem(w) for w in str_listM]
 str_listBot= [ps.stem(w) for w in str_listBot]
 str_listOm= [ps.stem(w) for w in str_listOm]
 
+print("Pas 5")
 
 # consecOm=[]
 # consecBot=[]
@@ -94,19 +98,20 @@ consecM=[]
 # for i in range(1,len(str_listOm)):
 	# consecOm.append(str_listOm[i-1]+"_"+str_listOm[i])
 	
-for i in range(1,len(str_listF)):
-	consecF.append(str_listF[i-1]+"_"+str_listF[i])
-for i in range(1,len(str_listM)):
-	consecM.append(str_listM[i-1]+"_"+str_listM[i])
+# for i in range(1,len(str_listF)):
+	# consecF.append(str_listF[i-1]+"_"+str_listF[i])
+# for i in range(1,len(str_listM)):
+	# consecM.append(str_listM[i-1]+"_"+str_listM[i])
 
 # consBot=Counter(consecBot)
 # consOm=Counter(consecOm)
-consF=Counter(consecF)
-consM=Counter(consecM)
+# consF=Counter(consecF)
+# consM=Counter(consecM)
 bot=Counter(str_listBot)
 om=Counter(str_listOm)
 f=Counter(str_listF)
 m=Counter(str_listM)
+print("Pas 6")
 
 for k in f.keys():
 	f[k]=f[k]/len(f)
@@ -120,13 +125,13 @@ for k in om.keys():
 	# consBot[k]=consBot[k]/len(consBot)
 # for k in consOm.keys():
 	# consOm[k]=consOm[k]/len(consOm)
-for k in consF.keys():
-	consF[k]=consF[k]/len(consF)
-for k in consM.keys():
-	consM[k]=consM[k]/len(consM)
+# for k in consF.keys():
+	# consF[k]=consF[k]/len(consF)
+# for k in consM.keys():
+	# consM[k]=consM[k]/len(consM)
 	
+print("Pas 7")
 f.subtract(m)
-om.subtract(bot)
 #Varianta 1: facem diferenta pe countere
 #https://docs.python.org/2/library/collections.html#collections.Counter         Dif.most_common()[:-n-1:-1]#Boy
 # f.most_common(25)#Girl
@@ -149,19 +154,29 @@ import io
 		# if w not in stopWords  and len(w) in range(4,10):
 			# fout.write(w+' ')
 
-with io.open("HumanTop100Stem.txt", 'w', encoding='utf8') as fout:
+
+with io.open("Top100Human.txt", 'w', encoding='utf8') as fout:
 	for (w,fr) in om.most_common(100):
 		fout.write(w+' ')
-with io.open("BotTop100Stem.txt", 'w', encoding='utf8') as fout:
+with io.open("Top100Bot.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in bot.most_common(100):
+		fout.write(w+' ')
+		
+om.subtract(bot)
+
+with io.open("Top100Human-Bot.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in om.most_common(100):
+		fout.write(w+' ')
+with io.open("Top100Bot-Human.txt", 'w', encoding='utf8') as fout:
 	for (w,fr) in om.most_common()[:-100-1:-1]:
 		fout.write(w+' ')
 
 
-f=Counter(str_listF)
-m=Counter(str_listM)
+# f=Counter(str_listF)
+# m=Counter(str_listM)
 #Varianta 2: luam care au aparut de cel putin 200 ori, dar nu mai mult de 1000 (ca dupaia sunt stopwords)
-filterF = {k:v for (k,v) in dict(f).items() if v>200 and v<1000}#nici prea populare (stopwords)
-filterM = {k:v for (k,v) in dict(m).items() if v>200 and v<1000}#nici prea nefolosite 
+# filterF = {k:v for (k,v) in dict(f).items() if v>200 and v<1000}#nici prea populare (stopwords)
+# filterM = {k:v for (k,v) in dict(m).items() if v>200 and v<1000}#nici prea nefolosite 
 #si facand diferenta: obtinem fotbal,beer,car,game,hit,huge la baieti si "wish, summer, girl" la fete :
 #!!!! set(filterF).difference(set(filterM)) !interesant
 
