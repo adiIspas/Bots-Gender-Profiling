@@ -9,12 +9,38 @@ from nltk.stem.snowball import SnowballStemmer
 class Features(object):
 
     def __init__(self, language):
+        self.language = language
         self.languages_name_dict = {'en': 'english', 'es': 'spanish'}
         self.languages_iso_dict = {'en': 'en_UK', 'es': 'es_ES'}
 
-        self.stop_words = stopwords.words(self.languages_name_dict.get(language))
-        self.syllables_dic = pyphen.Pyphen(lang=self.languages_iso_dict.get(language))
+        self.stop_words = stopwords.words(self.languages_name_dict.get(self.language))
+        self.syllables_dic = pyphen.Pyphen(lang=self.languages_iso_dict.get(self.language))
         self.stemmer = SnowballStemmer(self.languages_name_dict.get(language))
+
+        self.en_bot_popular_words = ['http', 'co', 't', 'job', 'develop', 'engin', 'softwar', 'manag', 'hire', 'senior',
+                                     'locat', 'descript', 'career', 'system', 'tech', 'techjob', 'itjob', 'analyst',
+                                     'technolog', 'ly', 'servic', 'project', 'applic', 'busi', 'compani', 'and',
+                                     'posit', 'data', 'java', 'experi', 'design', 'lead', 'medic', 'solut', 'respons',
+                                     'full', 'net', 'sr', 'histori', 'technic', 'support', 'provid', 'bit', 'learn',
+                                     'network', 'tip', 'team', 'id', 'picard', 'comput', 'read', 'is', 'consult',
+                                     'health', 'client', 'seek', 'check', 'product', 'requir', '0', 'test', 'secur',
+                                     'introduct', 'scrum', 'date', 'us', 'web', 'architect', 'inform', 'inc', 'com',
+                                     'detail', 'type', '18', 'python', 'custom', 'market', 'opportun', 'sql', 'site',
+                                     'gt', 'contract', 'program', 'california', 'oper', 'master', 'specialist', '2018',
+                                     'unit', 'titl', 'avail', 'administr', 'shoe', 'autom', 'level', 'will', 'nurs',
+                                     'state', 'enterpris', 'ca']
+
+        self.en_human_popular_words = ['rt', 'i', 'the', 'to', 'thi', 'my', 'on', 'so', 'that', 'thank', 'just', 'me',
+                                       'in', 'a', 'you', 'have', 'but', 'be', 'like', 'wa', 'from', 'for', 'at', 'all',
+                                       'get', 'day', 'up', 's', 'go', 'i\'m', 'not ', 'can', 'they', 'today', 'love',
+                                       'good', 'here', 'how', 'what', 'he', 'back', 'hi', 'been', 'now', 'it\'',
+                                       'there',
+                                       'think', ' if ', 'when', 'fuck', 'had', 'last', 'her', 'm', 'would', 'some',
+                                       'night', 'see', 'year', 'say', 'come', 'too', 'know', 'realli', 'tonight',
+                                       'still', 'vote', 'video', 'did', 'she', 'much', 'hope', 'happi', 'watch', 'do',
+                                       'right', 'off', 'well', 'one', 'out', 'them', 'even', 'win', 'morn', 'ye',
+                                       'mailonlin', 'also', 'next', 'x', 'take', 'i\'v', 'no', 'week', 'peopl', 'feel',
+                                       'should', 'could', 'sure', 'actual', 'done']
 
     def extract(self, tweets):
         number_of_words = 0
@@ -55,6 +81,8 @@ class Features(object):
         number_of_quotation_marks = 0
         number_of_slashes = 0
         number_of_less_grater_than_signs = 0
+        number_of_words_in_bot_popular_words = 0
+        number_of_words_in_human_popular_words = 0
 
         total_tweets = len(tweets)
 
@@ -97,6 +125,8 @@ class Features(object):
             number_of_quotation_marks += self.number_of_quotation_marks_per_tweet(tweet)
             number_of_slashes += self.number_of_slashes_per_tweet(tweet)
             number_of_less_grater_than_signs += self.number_of_less_grater_than_signs_per_tweet(tweet)
+            number_of_words_in_bot_popular_words += self.number_of_words_in_bot_popular_words_per_tweet(tweet)
+            number_of_words_in_human_popular_words += self.number_of_words_in_human_popular_words_per_tweet(tweet)
 
         average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
         number_of_words /= total_tweets
@@ -137,6 +167,8 @@ class Features(object):
         number_of_quotation_marks /= total_tweets
         number_of_slashes /= total_tweets
         number_of_less_grater_than_signs /= total_tweets
+        number_of_words_in_bot_popular_words /= total_tweets
+        number_of_words_in_human_popular_words /= total_tweets
 
         return [number_of_words, number_of_characters, average_word_len, number_of_stop_words, number_of_tags,
                 number_of_hash_tags, readability, number_of_digits, number_of_secure_links, number_of_unsecured_links,
@@ -146,7 +178,8 @@ class Features(object):
                 number_of_stars, number_of_parenthesis, number_of_minuses, number_of_underscores, number_of_equals,
                 number_of_pluses, number_of_brackets, number_of_curly_brackets, number_of_vertical_bars,
                 number_of_semicolons, number_of_colons, number_of_apostrophes, number_of_grave_accents,
-                number_of_quotation_marks, number_of_slashes, number_of_less_grater_than_signs]
+                number_of_quotation_marks, number_of_slashes, number_of_less_grater_than_signs,
+                number_of_words_in_bot_popular_words, number_of_words_in_human_popular_words]
 
     def number_of_syllables_per_tweet(self, tweet):
         number_of_syllables = 0
@@ -307,3 +340,11 @@ class Features(object):
     @staticmethod
     def number_of_less_grater_than_signs_per_tweet(tweet):
         return str(tweet).count('<') + str(tweet).count('>')
+
+    def number_of_words_in_bot_popular_words_per_tweet(self, tweet):
+        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
+        return len([word for word in stemmed_words if word in self.en_bot_popular_words])
+
+    def number_of_words_in_human_popular_words_per_tweet(self, tweet):
+        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
+        return len([word for word in stemmed_words if word in self.en_human_popular_words])

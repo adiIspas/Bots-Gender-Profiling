@@ -1,17 +1,16 @@
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 from sklearn import model_selection
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
-from sklearn.preprocessing import normalize
-from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import normalize
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 models = [('LR', LogisticRegression(solver='lbfgs')),
           ('LDA', LinearDiscriminantAnalysis()),
@@ -45,7 +44,7 @@ results = []
 names = []
 mods = []
 for name, model in models:
-    k_fold = model_selection.StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+    k_fold = model_selection.StratifiedKFold(n_splits=15, shuffle=True, random_state=15)
     cv_results = model_selection.cross_val_score(model, X, y, cv=k_fold, scoring='accuracy')
     results.append(cv_results)
     names.append(name)

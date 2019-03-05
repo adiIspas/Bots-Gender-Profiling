@@ -1,8 +1,7 @@
 import datetime
 import time
 
-import src.preparation.text_reader as tr
-import src.preparation.xml_reader as xr
+import src.preparation.reader as reader
 import src.processing.data_processor as dp
 from src.processing.fetures_extraction import Features
 
@@ -21,11 +20,11 @@ start_time = time.time()
 
 # authors_tweets = listdir(dataset_raw_path)
 # authors_tweets = [author_tweets for author_tweets in authors_tweets if author_tweets.endswith(file_extension)]
-authors_tweets = tr.get_authors_files(dataset_raw_path + 'truth.txt')
+authors_tweets = reader.get_authors_files(dataset_raw_path + 'truth.txt')
 
 file_authors_classes = dataset_raw_path + 'truth.txt'
 
-authors_classes_train = tr.get_authors_classes(file_authors_classes)
+authors_classes = reader.get_authors_classes(file_authors_classes)
 
 data = []
 columns = ['number_of_words', 'number_of_characters', 'average_word_len', 'number_of_stop_words', 'number_of_tags',
@@ -37,19 +36,20 @@ columns = ['number_of_words', 'number_of_characters', 'average_word_len', 'numbe
            'number_of_pluses', 'number_of_brackets', 'number_of_curly_brackets', 'number_of_vertical_bars',
            'number_of_semicolons', 'number_of_colons', 'number_of_apostrophes', 'number_of_grave_accents',
            'number_of_quotation_marks', 'number_of_slashes', 'number_of_less_grater_than_signs',
+           'number_of_words_in_bot_popular_words', 'number_of_words_in_human_popular_words'
            'author_class']
 
-fe = Features(language)
+features = Features(language)
 for author_tweets in authors_tweets:
     author_id = author_tweets.replace(file_extension, '')
     print('Processing ', author_id)
 
-    tweets = xr.get_tweets(dataset_raw_path + author_tweets)
-    features = fe.extract(tweets)
+    tweets = reader.get_tweets(dataset_raw_path + author_tweets)
+    features_from_tweets = features.extract(tweets)
 
-    if authors_classes_train.get(author_id) is not None:
-        features.append(authors_classes_train.get(author_id))
-        data.append(features)
+    if authors_classes.get(author_id) is not None:
+        features_from_tweets.append(authors_classes.get(author_id))
+        data.append(features_from_tweets)
 
 dp.create_csv_dataset(data, columns, dataset_processed_path + language + '_data.csv')
 
