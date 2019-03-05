@@ -84,6 +84,7 @@ class Features(object):
         number_of_words_in_bot_popular_words = 0
         number_of_words_in_human_popular_words = 0
 
+        different_words = set()
         total_tweets = len(tweets)
 
         for tweet in tweets:
@@ -127,8 +128,10 @@ class Features(object):
             number_of_less_grater_than_signs += self.number_of_less_grater_than_signs_per_tweet(tweet)
             number_of_words_in_bot_popular_words += self.number_of_words_in_bot_popular_words_per_tweet(tweet)
             number_of_words_in_human_popular_words += self.number_of_words_in_human_popular_words_per_tweet(tweet)
+            different_words = self.different_words_per_tweet(different_words, tweet)
 
         average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
+        number_of_different_words = len(different_words) / number_of_words if number_of_words > 0 else 0
         number_of_words /= total_tweets
         number_of_characters /= total_tweets
         average_word_len /= total_tweets
@@ -179,7 +182,7 @@ class Features(object):
                 number_of_pluses, number_of_brackets, number_of_curly_brackets, number_of_vertical_bars,
                 number_of_semicolons, number_of_colons, number_of_apostrophes, number_of_grave_accents,
                 number_of_quotation_marks, number_of_slashes, number_of_less_grater_than_signs,
-                number_of_words_in_bot_popular_words, number_of_words_in_human_popular_words]
+                number_of_words_in_bot_popular_words, number_of_words_in_human_popular_words, number_of_different_words]
 
     def number_of_syllables_per_tweet(self, tweet):
         number_of_syllables = 0
@@ -196,6 +199,20 @@ class Features(object):
     def number_of_female_terms_per_tweet(self, tweet):
         tweet = ' '.join([self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)])
         return tweet.count('she') + tweet.count('her') + tweet.count('girl') + tweet.count('woman')
+
+    def number_of_words_in_bot_popular_words_per_tweet(self, tweet):
+        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
+        return len([word for word in stemmed_words if word in self.en_bot_popular_words])
+
+    def number_of_words_in_human_popular_words_per_tweet(self, tweet):
+        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
+        return len([word for word in stemmed_words if word in self.en_human_popular_words])
+
+    def different_words_per_tweet(self, different_words, tweet):
+        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
+        different_words.update(set(stemmed_words))
+
+        return different_words
 
     @staticmethod
     def number_of_words_per_tweet(tweet):
@@ -340,11 +357,3 @@ class Features(object):
     @staticmethod
     def number_of_less_grater_than_signs_per_tweet(tweet):
         return str(tweet).count('<') + str(tweet).count('>')
-
-    def number_of_words_in_bot_popular_words_per_tweet(self, tweet):
-        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
-        return len([word for word in stemmed_words if word in self.en_bot_popular_words])
-
-    def number_of_words_in_human_popular_words_per_tweet(self, tweet):
-        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
-        return len([word for word in stemmed_words if word in self.en_human_popular_words])
