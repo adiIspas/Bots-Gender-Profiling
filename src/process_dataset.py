@@ -36,7 +36,7 @@ columns = ['number_of_words', 'number_of_characters', 'average_word_len', 'numbe
            'number_of_pluses', 'number_of_brackets', 'number_of_curly_brackets', 'number_of_vertical_bars',
            'number_of_semicolons', 'number_of_colons', 'number_of_apostrophes', 'number_of_grave_accents',
            'number_of_quotation_marks', 'number_of_slashes', 'number_of_less_grater_than_signs',
-           'number_of_words_in_bot_popular_words', 'number_of_words_in_human_popular_words'
+           'number_of_words_in_bot_popular_words', 'number_of_words_in_human_popular_words',
            'author_class']
 
 features = Features(language)
