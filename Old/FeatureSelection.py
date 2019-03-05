@@ -61,23 +61,15 @@ str_listM=re.findall(r"[\w']+", strM)
 
 #nu e chiar hardcodeala ca apar chestii la care ne asteptam, la baieti fuck e in primele 10, cunt in primele 100
 #la fete: love, life, happy, instagram primele 100
-from nltk.stem import PorterStemmer 
-from nltk.tokenize import word_tokenize 
-ps = PorterStemmer() 
-str_listF= [ps.stem(w) for w in str_listF]
-str_listM= [ps.stem(w) for w in str_listM]
 
-# setF = set(str_listF) 
-# setM = set(str_listM) 
+# from nltk.tokenize import word_tokenize 
+# from nltk.stem import PorterStemmer 
+# ps = PorterStemmer() 
+# str_listF= [ps.stem(w) for w in str_listF]
+# str_listM= [ps.stem(w) for w in str_listM]
 
-# DifF=setF.difference(setM)
-# DifM=setM.difference(setF)
 
-# str_listF=[k for k in str_listF if k in DifF]
-# str_listM=[k for k in str_listM if k in DifM]
-  
-# Counter(str_listF).most_common(50)
-# Counter(str_listM).most_common(50)
+
 
 
 f=Counter(str_listF)
@@ -92,23 +84,32 @@ f.subtract(m)
 
 #Varianta 1: facem diferenta pe countere
 #https://docs.python.org/2/library/collections.html#collections.Counter         Dif.most_common()[:-n-1:-1]#Boy
-f.most_common(25)#Girl
-f.most_common()[:-25-1:-1]#Boy
+# f.most_common(25)#Girl
+# f.most_common()[:-25-1:-1]#Boy
 
+
+
+# stopWords = ['ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during', 'out', 'very', 'having', 'with', 'they', 'own', 'an', 'be', 'some', 'for', 'do', 'its', 'yours', 'such', 'into', 'of', 'most', 'itself', 'other', 'off', 'is', 's', 'am', 'or', 'who', 'as', 'from', 'him', 'each', 'the', 'themselves', 'until', 'below', 'are', 'we', 'these', 'your', 'his', 'through', 'don', 'nor', 'me', 'were', 'her', 'more', 'himself', 'this', 'down', 'should', 'our', 'their', 'while', 'above', 'both', 'up', 'to', 'ours', 'had', 'she', 'all', 'no', 'when', 'at', 'any', 'before', 'them', 'same', 'and', 'been', 'have', 'in', 'will', 'on', 'does', 'yourselves', 'then', 'that', 'because', 'what', 'over', 'why', 'so', 'can', 'did', 'not', 'now', 'under', 'he', 'you', 'herself', 'has', 'just', 'where', 'too', 'only', 'myself', 'which', 'those', 'i', 'after', 'few', 'whom', 't', 'being', 'if', 'theirs', 'my', 'against', 'a', 'by', 'doing', 'it', 'how', 'further', 'was', 'here', 'than']
+# stopWords +=['i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself','yourselves','he','him','his','himself','she','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same','so','than','too','very','s','t','can','will','just','don','should','now']
+# stopWords +=['document','cdata','author','lang','en']
+# stopWords= [ps.stem(w) for w in stopWords]
 
 import io
-with io.open("GirlTop50.txt", 'w', encoding='utf8') as fout:
-	for (w,fr) in f.most_common(50):
-		fout.write(w+' '+str(abs(fr))+'\n')
-with io.open("GirlTop150.txt", 'w', encoding='utf8') as fout:
-	for (w,fr) in f.most_common(150):
-		fout.write(w+' '+str(abs(fr))+'\n')
-with io.open("BoyTop50.txt", 'w', encoding='utf8') as fout:
-	for (w,fr) in f.most_common()[:-50-1:-1]:
-		fout.write(w+' '+str(abs(fr))+'\n')
-with io.open("BoyTop150.txt", 'w', encoding='utf8') as fout:
-	for (w,fr) in f.most_common()[:-150-1:-1]:
-		fout.write(w+' '+str(abs(fr))+'\n')
+# with io.open("GirlAll.txt", 'w', encoding='utf8') as fout:
+	# for w in str_listF:
+		# if w not in stopWords  and len(w) in range(4,10):
+			# fout.write(w+' ')
+# with io.open("BoyAll.txt", 'w', encoding='utf8') as fout:
+	# for w in str_listM:
+		# if w not in stopWords  and len(w) in range(4,10):
+			# fout.write(w+' ')
+
+with io.open("GirlTop100FaraStem.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in f.most_common(100):
+		fout.write(w+' ')
+with io.open("BoyTop100FaraStem.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in f.most_common()[:-100-1:-1]:
+		fout.write(w+' ')
 
 
 f=Counter(str_listF)
