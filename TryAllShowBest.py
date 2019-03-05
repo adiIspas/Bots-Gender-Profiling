@@ -45,21 +45,21 @@ models.append(('QDA',     QuadraticDiscriminantAnalysis()  ))
 # X=data[:,1:]
 # Features.pop(0)#Primu e clasa
 
-# f = open("train.csv")
-# Features=f.readline().split(',')
-# data = np.loadtxt(f,delimiter=",")
-# Features.pop(-1)#ultimu e clasa
-# Y=data[:,-1]
-# X=data[:, :-1]
-# Y= np.transpose([ round(x/2.0+0.1) for x in Y])
-
-f = open("trainGender.csv")#asta are doar 1 si 2 (deci nu sunt in csv boti)
+f = open("train.csv")
 Features=f.readline().split(',')
 data = np.loadtxt(f,delimiter=",")
 Features.pop(-1)#ultimu e clasa
 Y=data[:,-1]
 X=data[:, :-1]
-Y= np.transpose([ x-1 for x in Y])
+Y= np.transpose([ round(x/2.0+0.1) for x in Y])
+
+# f = open("trainGender.csv")#asta are doar 1 si 2 (deci nu sunt in csv boti)
+# Features=f.readline().split(',')
+# data = np.loadtxt(f,delimiter=",")
+# Features.pop(-1)#ultimu e clasa
+# Y=data[:,-1]
+# X=data[:, :-1]
+# Y= np.transpose([ x-1 for x in Y])
 
 
 #https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
@@ -97,7 +97,7 @@ indices = np.argsort(importances)[::-1]
 
 
 
-# X=normalize(X)
+X=normalize(X)
 
 #https://markhneedham.com/blog/2013/11/06/python-generate-all-combinations-of-a-list/
 # import itertools as it
@@ -134,6 +134,8 @@ for i in range( round(len(Features)/4),round(len(Features)/3) ):
 BestIndex=np.array([x.mean() for x in results]).argsort()[::-1][:10]
 results=np.array(results)[BestIndex]
 names=np.array(names)[BestIndex]
+Subfeatures=np.array(Subfeatures)[BestIndex]
+mods=np.array(mods)[BestIndex]
 
 
 
@@ -165,6 +167,10 @@ print( (predictions_0==y_test).mean()  )
 print( (predictions_1==y_test).mean()  )
 print( (predictions_2==y_test).mean()  )
 print( (([round(x/3.0) for x in preds])==y_test).mean() )
+
+print(names[0],Subfeatures[0])
+print(names[1],Subfeatures[1])
+print(names[2],Subfeatures[2])
 	
 from sklearn.metrics import confusion_matrix
 tn, fp, fn, tp = confusion_matrix(y_test,([round(x/3.0) for x in preds]) ).ravel()
@@ -177,5 +183,4 @@ ax = fig.add_subplot(111)
 plt.boxplot(results.tolist())
 ax.set_xticklabels(names)
 plt.show()
-
 
