@@ -19,12 +19,15 @@ from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.neighbors import NearestCentroid
 
 models = []
 models.append(('LR', LogisticRegression()))
 models.append(('LDA', LinearDiscriminantAnalysis()))
 models.append(('Knn3',     KNeighborsClassifier(3) ))
 models.append(('Knn5',     KNeighborsClassifier(5) ))
+models.append(('Knn3D',     KNeighborsClassifier(3, weights='distance') ))
+models.append(('Knn5D',     KNeighborsClassifier(5, weights='distance') ))
 models.append(('LSVM',     SVC(kernel="linear")  ))
 models.append(('RBF',     SVC()  ))
 models.append(('DT',     DecisionTreeClassifier(max_depth=5) ))
@@ -35,7 +38,8 @@ models.append(('NB',     GaussianNB() ))
 models.append(('QDA',     QuadraticDiscriminantAnalysis()  ))
 
 
-
+#https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html
+#todo, sa vad vecinii aia naspa
 
 
 # f = open("x_features.txt")
@@ -117,7 +121,7 @@ for i in range( round(len(Features)/4),round(len(Features)/3) ):
 		#https://stackoverflow.com/questions/8386675/extracting-specific-columns-in-numpy-array
 		subset=indices[0:i]
 		XTemp=X[:,subset]
-		kfold = model_selection.StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+		kfold = model_selection.StratifiedKFold(n_splits=10, shuffle=True)
 		cv_results = model_selection.cross_val_score(model, XTemp, Y, cv=kfold, scoring='accuracy')
 		
 		results.append(cv_results)
@@ -163,9 +167,9 @@ for input, p0,p1,p2, label in zip (inds[idx_test], predictions_0,predictions_1,p
     print(input+1, 'has been classified as ', prediction, 'and should be ', label)
 
 preds=(predictions_0+predictions_1+predictions_2)
-print( (predictions_0==y_test).mean()  )
-print( (predictions_1==y_test).mean()  )
-print( (predictions_2==y_test).mean()  )
+print( (predictions_0==y_test).mean()  ,results[0].mean())
+print( (predictions_1==y_test).mean()  ,results[1].mean())
+print( (predictions_2==y_test).mean()  ,results[2].mean())
 print( (([round(x/3.0) for x in preds])==y_test).mean() )
 
 print(names[0],Subfeatures[0])
