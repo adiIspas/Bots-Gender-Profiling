@@ -75,11 +75,13 @@ str_listOm=re.findall(r"[\w']+", strOm)
 #nu e chiar hardcodeala ca apar chestii la care ne asteptam, la baieti fuck e in primele 10, cunt in primele 100
 #la fete: love, life, happy, instagram primele 100
 
-# from nltk.tokenize import word_tokenize 
-# from nltk.stem import PorterStemmer 
-# ps = PorterStemmer() 
-# str_listF= [ps.stem(w) for w in str_listF]
-# str_listM= [ps.stem(w) for w in str_listM]
+from nltk.tokenize import word_tokenize 
+from nltk.stem import PorterStemmer 
+ps = PorterStemmer() 
+str_listF= [ps.stem(w) for w in str_listF]
+str_listM= [ps.stem(w) for w in str_listM]
+str_listBot= [ps.stem(w) for w in str_listBot]
+str_listOm= [ps.stem(w) for w in str_listOm]
 
 
 
@@ -127,11 +129,11 @@ import io
 		# if w not in stopWords  and len(w) in range(4,10):
 			# fout.write(w+' ')
 
-with io.open("GirlTop100FaraStem.txt", 'w', encoding='utf8') as fout:
-	for (w,fr) in f.most_common(100):
+with io.open("HumanTop100Stem.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in om.most_common(100):
 		fout.write(w+' ')
-with io.open("BoyTop100FaraStem.txt", 'w', encoding='utf8') as fout:
-	for (w,fr) in f.most_common()[:-100-1:-1]:
+with io.open("BotTop100Stem.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in om.most_common()[:-100-1:-1]:
 		fout.write(w+' ')
 
 
