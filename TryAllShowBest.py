@@ -45,14 +45,21 @@ models.append(('QDA',     QuadraticDiscriminantAnalysis()  ))
 # X=data[:,1:]
 # Features.pop(0)#Primu e clasa
 
-f = open("train.csv")
+# f = open("train.csv")
+# Features=f.readline().split(',')
+# data = np.loadtxt(f,delimiter=",")
+# Features.pop(-1)#ultimu e clasa
+# Y=data[:,-1]
+# X=data[:, :-1]
+# Y= np.transpose([ round(x/2.0+0.1) for x in Y])
+
+f = open("trainGender.csv")#asta are doar 1 si 2 (deci nu sunt in csv boti)
 Features=f.readline().split(',')
 data = np.loadtxt(f,delimiter=",")
 Features.pop(-1)#ultimu e clasa
 Y=data[:,-1]
 X=data[:, :-1]
-Y= np.transpose([ round(x/2.0+0.1) for x in Y])
-
+Y= np.transpose([ x-1 for x in Y])
 
 
 #https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
@@ -62,6 +69,32 @@ forest.fit(X, Y)
 importances = forest.feature_importances_
 std = np.std([tree.feature_importances_ for tree in forest.estimators_],axis=0)
 indices = np.argsort(importances)[::-1]
+
+
+
+
+
+#https://www.kaggle.com/willkoehrsen/visualize-a-decision-tree-w-python-scikit-learn
+
+# from sklearn.ensemble import RandomForestClassifier
+# temp = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)
+# temp.fit(X,Y)
+# estimator = temp.estimators_[5]
+
+# from sklearn.tree import export_graphviz
+# export_graphviz(estimator, out_file='tree.dot', 
+                # feature_names = Features,
+                # class_names = ["Baiat","Femeie"],
+                # rounded = True, proportion = False, 
+                # filled = True)
+# from subprocess import call
+# call(['dot', '-Tpng', 'tree.dot', '-o', 'tree.png', '-Gdpi=600'])
+# import matplotlib.pyplot as plt
+# plt.figure(figsize = (14, 18))
+# plt.imshow(plt.imread('tree.png'))
+# plt.axis('off');
+# plt.show();
+
 
 
 # X=normalize(X)
