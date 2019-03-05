@@ -1,62 +1,70 @@
 import re
 from collections import Counter
 
-print("1")
 Dir='PAN\\en\\';
-fout= open("x_features.txt","w")
+fout= open(Dir+"x_features.txt","w")
 lines = open(Dir+'truth-train.txt').read().splitlines()
 
-print("2")
-fout.write("Clasa,Diez,At,Link,Percent,NrVirgula,NrPct,NrNr,NrExclamare,he,she  ,NrLinii,LungimeMedie\n")
+fout.write("Clasa,Diez,At,Link,Percent,NrVirgula,NrPct,NrNr,NrExclamare,NrIntrebare,he,she  ,NrLinii,LungimeMedie\n")
 
-print("3")
+strBot=""
+strOm =""
+
 strF=""
 strM=""
 for line in lines:
 	tokens=line.split(':::')
 	fil=open(Dir+tokens[0]+'.xml', encoding="utf8").read().splitlines()
 	
-	#if(tokens[2]!="bot"):
-	if(tokens[2]=="bot"):
-		fout.write("0, ")
-	if(tokens[2]=="male"):
-		fout.write("1, ")
-		strM+=" ".join(fil)
-	if(tokens[2]=="female"):
-		fout.write("1, ")
-		strF+=" ".join(fil)
-	
-	L=[len(x) for x in fil]
-	Length=sum(L) / float(len(L));
-	# fout.write("%d, " % sum([ ("#" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("@" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("http" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("%" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("," in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("." in x) for x in fil]))
-	fout.write("%d, " % sum([ x.count("#") for x in fil]))
-	fout.write("%d, " % sum([ x.count("@") for x in fil]))
-	fout.write("%d, " % sum([ x.count("http") for x in fil]))
-	fout.write("%d, " % sum([ x.count("%") for x in fil]))
-	fout.write("%d, " % sum([ x.count(",") for x in fil]))
-	fout.write("%d, " % sum([ x.count(".") for x in fil]))
-	fout.write("%d, " % sum([ sum(c.isdigit() for c in x) for x in fil]))
-	fout.write("%d, " % sum([ x.count("!") for x in fil]))
-	fout.write("%d, " % sum([ x.count(" he ")+x.count(" his ")+x.count(" man ")+x.count(" boy ") for x in fil]))
-	fout.write("%d, " % sum([ x.count(" she ")+x.count(" her ")+x.count(" woman ")+x.count(" girl ") for x in fil]))
-	
-	fout.write("%d, " % len(fil))
-	fout.write("%d\n" % Length)
+	if(True):
+		if(tokens[2]=="bot"):
+			fout.write("0, ")
+			strBot+=" ".join(fil)
+		if(tokens[2]=="male"):
+			fout.write("1, ")
+			strM+=" ".join(fil)
+		if(tokens[2]=="female"):
+			fout.write("2, ")
+			strF+=" ".join(fil)
+		
+		L=[len(x) for x in fil]
+		Length=sum(L) / float(len(L));
+		# fout.write("%d, " % sum([ ("#" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("@" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("http" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("%" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("," in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("." in x) for x in fil]))
+		fout.write("%d, " % sum([ x.count("#") for x in fil]))
+		fout.write("%d, " % sum([ x.count("@") for x in fil]))
+		fout.write("%d, " % sum([ x.count("http") for x in fil]))
+		fout.write("%d, " % sum([ x.count("%") for x in fil]))
+		fout.write("%d, " % sum([ x.count(",") for x in fil]))
+		fout.write("%d, " % sum([ x.count(".") for x in fil]))
+		fout.write("%d, " % sum([ sum(c.isdigit() for c in x) for x in fil]))
+		fout.write("%d, " % sum([ x.count("!") for x in fil]))
+		fout.write("%d, " % sum([ x.count(" he ")+x.count(" his ")+x.count(" man ")+x.count(" boy ") for x in fil]))
+		fout.write("%d, " % sum([ x.count(" she ")+x.count(" her ")+x.count(" woman ")+x.count(" girl ") for x in fil]))
+		
+		fout.write("%d, " % len(fil))
+		fout.write("%d\n" % Length)
 
 		
 
-quit()
-
-
+strOm=strF+" "+strM
 strF=strF.lower()
 strM=strM.lower()
+
+strBot=strBot.lower()
+strOm=strOm.lower()
+
+
 str_listF=re.findall(r"[\w']+", strF)
 str_listM=re.findall(r"[\w']+", strM)
+
+str_listBot=re.findall(r"[\w']+", strBot)
+str_listOm=re.findall(r"[\w']+", strOm)
+
 
 
 #Daca faci asta e si bine, e si rau:
@@ -66,34 +74,71 @@ str_listM=re.findall(r"[\w']+", strM)
 
 #nu e chiar hardcodeala ca apar chestii la care ne asteptam, la baieti fuck e in primele 10, cunt in primele 100
 #la fete: love, life, happy, instagram primele 100
-from nltk.stem import PorterStemmer 
+
 from nltk.tokenize import word_tokenize 
+from nltk.stem import PorterStemmer 
 ps = PorterStemmer() 
 str_listF= [ps.stem(w) for w in str_listF]
 str_listM= [ps.stem(w) for w in str_listM]
+str_listBot= [ps.stem(w) for w in str_listBot]
+str_listOm= [ps.stem(w) for w in str_listOm]
 
-# setF = set(str_listF) 
-# setM = set(str_listM) 
 
-# DifF=setF.difference(setM)
-# DifM=setM.difference(setF)
 
-# str_listF=[k for k in str_listF if k in DifF]
-# str_listM=[k for k in str_listM if k in DifM]
-  
-# Counter(str_listF).most_common(50)
-# Counter(str_listM).most_common(50)
+
+
 f=Counter(str_listF)
-cf=Counter(str_listF)#copie f
 m=Counter(str_listM)
-cm=Counter(str_listM)
 
-f.subtract(cm)
-m.subtract(cf)
+bot=Counter(str_listBot)
+om=Counter(str_listOm)
 
+for k in f.keys():
+	f[k]=f[k]/len(str_listF)
+	
+for k in m.keys():
+	m[k]=m[k]/len(str_listM)
+
+for k in bot.keys():
+	bot[k]=bot[k]/len(str_listBot)
+	
+for k in om.keys():
+	om[k]=om[k]/len(str_listOm)
+	
+f.subtract(m)
+om.subtract(bot)
 #Varianta 1: facem diferenta pe countere
-m.most_common(25)
-f.most_common(25)
+#https://docs.python.org/2/library/collections.html#collections.Counter         Dif.most_common()[:-n-1:-1]#Boy
+# f.most_common(25)#Girl
+# f.most_common()[:-25-1:-1]#Boy
+
+
+
+# stopWords = ['ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during', 'out', 'very', 'having', 'with', 'they', 'own', 'an', 'be', 'some', 'for', 'do', 'its', 'yours', 'such', 'into', 'of', 'most', 'itself', 'other', 'off', 'is', 's', 'am', 'or', 'who', 'as', 'from', 'him', 'each', 'the', 'themselves', 'until', 'below', 'are', 'we', 'these', 'your', 'his', 'through', 'don', 'nor', 'me', 'were', 'her', 'more', 'himself', 'this', 'down', 'should', 'our', 'their', 'while', 'above', 'both', 'up', 'to', 'ours', 'had', 'she', 'all', 'no', 'when', 'at', 'any', 'before', 'them', 'same', 'and', 'been', 'have', 'in', 'will', 'on', 'does', 'yourselves', 'then', 'that', 'because', 'what', 'over', 'why', 'so', 'can', 'did', 'not', 'now', 'under', 'he', 'you', 'herself', 'has', 'just', 'where', 'too', 'only', 'myself', 'which', 'those', 'i', 'after', 'few', 'whom', 't', 'being', 'if', 'theirs', 'my', 'against', 'a', 'by', 'doing', 'it', 'how', 'further', 'was', 'here', 'than']
+# stopWords +=['i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself','yourselves','he','him','his','himself','she','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same','so','than','too','very','s','t','can','will','just','don','should','now']
+# stopWords +=['document','cdata','author','lang','en']
+# stopWords= [ps.stem(w) for w in stopWords]
+
+import io
+# with io.open("GirlAll.txt", 'w', encoding='utf8') as fout:
+	# for w in str_listF:
+		# if w not in stopWords  and len(w) in range(4,10):
+			# fout.write(w+' ')
+# with io.open("BoyAll.txt", 'w', encoding='utf8') as fout:
+	# for w in str_listM:
+		# if w not in stopWords  and len(w) in range(4,10):
+			# fout.write(w+' ')
+
+with io.open("HumanTop100Stem.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in om.most_common(100):
+		fout.write(w+' ')
+with io.open("BotTop100Stem.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in om.most_common()[:-100-1:-1]:
+		fout.write(w+' ')
+
+
+f=Counter(str_listF)
+m=Counter(str_listM)
 #Varianta 2: luam care au aparut de cel putin 200 ori, dar nu mai mult de 1000 (ca dupaia sunt stopwords)
 filterF = {k:v for (k,v) in dict(f).items() if v>200 and v<1000}#nici prea populare (stopwords)
 filterM = {k:v for (k,v) in dict(m).items() if v>200 and v<1000}#nici prea nefolosite 
