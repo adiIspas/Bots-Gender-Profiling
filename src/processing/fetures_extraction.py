@@ -1,7 +1,7 @@
 import re
-import pyphen
-import emoji
 
+import emoji
+import pyphen
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
@@ -35,6 +35,26 @@ class Features(object):
         number_of_male_terms = 0
         number_of_female_terms = 0
         number_of_emoji = 0
+        number_of_tildes = 0
+        number_of_dollars = 0
+        number_of_circumflex_accents = 0
+        number_of_ampersands = 0
+        number_of_stars = 0
+        number_of_parenthesis = 0
+        number_of_minuses = 0
+        number_of_underscores = 0
+        number_of_equals = 0
+        number_of_pluses = 0
+        number_of_brackets = 0
+        number_of_curly_brackets = 0
+        number_of_vertical_bars = 0
+        number_of_semicolons = 0
+        number_of_colons = 0
+        number_of_apostrophes = 0
+        number_of_grave_accents = 0
+        number_of_quotation_marks = 0
+        number_of_slashes = 0
+        number_of_less_grater_than_signs = 0
 
         total_tweets = len(tweets)
 
@@ -57,26 +77,66 @@ class Features(object):
             number_of_male_terms += self.number_of_male_terms_per_tweet(tweet)
             number_of_female_terms += self.number_of_female_terms_per_tweet(tweet)
             number_of_emoji += self.number_of_emoji_per_tweet(tweet)
+            number_of_tildes += self.number_of_tilde_per_tweet(tweet)
+            number_of_dollars += self.number_of_dollars_per_tweet(tweet)
+            number_of_circumflex_accents += self.number_of_circumflex_accents_per_tweet(tweet)
+            number_of_ampersands += self.number_of_ampersands_per_tweet(tweet)
+            number_of_stars += self.number_of_stars_per_tweet(tweet)
+            number_of_parenthesis += self.number_of_parenthesis_per_tweet(tweet)
+            number_of_minuses += self.number_of_minuses_per_tweet(tweet)
+            number_of_underscores += self.number_of_underscores_per_tweet(tweet)
+            number_of_equals += self.number_of_equals_per_tweet(tweet)
+            number_of_pluses += self.number_of_pluses_per_tweet(tweet)
+            number_of_brackets += self.number_of_brackets_per_tweet(tweet)
+            number_of_curly_brackets += self.number_of_curly_brackets_per_tweet(tweet)
+            number_of_vertical_bars += self.number_of_vertical_bars_per_tweet(tweet)
+            number_of_semicolons += self.number_of_semicolons_per_tweet(tweet)
+            number_of_colons += self.number_of_colons_per_tweet(tweet)
+            number_of_apostrophes += self.number_of_apostrophes_per_tweet(tweet)
+            number_of_grave_accents += self.number_of_grave_accents_per_tweet(tweet)
+            number_of_quotation_marks += self.number_of_quotation_marks_per_tweet(tweet)
+            number_of_slashes += self.number_of_slashes_per_tweet(tweet)
+            number_of_less_grater_than_signs += self.number_of_less_grater_than_signs_per_tweet(tweet)
 
         average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
-        number_of_words = number_of_words / total_tweets
-        number_of_characters = number_of_characters / total_tweets
-        average_word_len = average_word_len / total_tweets
-        number_of_stop_words = number_of_stop_words / total_tweets
-        number_of_tags = number_of_tags / total_tweets
-        number_of_hash_tags = number_of_hash_tags / total_tweets
+        number_of_words /= total_tweets
+        number_of_characters /= total_tweets
+        average_word_len /= total_tweets
+        number_of_stop_words /= total_tweets
+        number_of_tags /= total_tweets
+        number_of_hash_tags /= total_tweets
         readability = self.readability_level(number_of_words, average_number_of_syllables_per_word)
-        number_of_digits = number_of_digits / total_tweets
-        number_of_secure_links = number_of_secure_links / total_tweets
-        number_of_unsecured_links = number_of_unsecured_links / total_tweets
-        number_of_percent = number_of_percent / total_tweets
-        number_of_exclamation_marks = number_of_exclamation_marks / total_tweets
-        number_of_question_marks = number_of_question_marks / total_tweets
-        number_of_commas = number_of_commas / total_tweets
-        number_of_points = number_of_points / total_tweets
+        number_of_digits /= total_tweets
+        number_of_secure_links /= total_tweets
+        number_of_unsecured_links /= total_tweets
+        number_of_percent /= total_tweets
+        number_of_exclamation_marks /= total_tweets
+        number_of_question_marks /= total_tweets
+        number_of_commas /= total_tweets
+        number_of_points /= total_tweets
         number_of_male_terms = number_of_male_terms / total_tweets
-        number_of_female_terms = number_of_female_terms / total_tweets
-        number_of_emoji = number_of_emoji / total_tweets
+        number_of_female_terms /= total_tweets
+        number_of_emoji /= total_tweets
+        number_of_tildes /= total_tweets
+        number_of_dollars /= total_tweets
+        number_of_circumflex_accents /= total_tweets
+        number_of_ampersands /= total_tweets
+        number_of_stars /= total_tweets
+        number_of_parenthesis /= total_tweets
+        number_of_minuses /= total_tweets
+        number_of_underscores /= total_tweets
+        number_of_equals /= total_tweets
+        number_of_pluses /= total_tweets
+        number_of_brackets /= total_tweets
+        number_of_curly_brackets /= total_tweets
+        number_of_vertical_bars /= total_tweets
+        number_of_semicolons /= total_tweets
+        number_of_colons /= total_tweets
+        number_of_apostrophes /= total_tweets
+        number_of_grave_accents /= total_tweets
+        number_of_quotation_marks /= total_tweets
+        number_of_slashes /= total_tweets
+        number_of_less_grater_than_signs /= total_tweets
 
         return [number_of_words, number_of_characters, average_word_len, number_of_stop_words, number_of_tags,
                 number_of_hash_tags, readability, number_of_digits, number_of_secure_links, number_of_unsecured_links,
@@ -162,3 +222,83 @@ class Features(object):
     @staticmethod
     def number_of_emoji_per_tweet(tweet):
         return emoji.demojize(tweet).count(':') / 2
+
+    @staticmethod
+    def number_of_tilde_per_tweet(tweet):
+        return str(tweet).count('~')
+
+    @staticmethod
+    def number_of_dollars_per_tweet(tweet):
+        return str(tweet).count('$')
+
+    @staticmethod
+    def number_of_circumflex_accents_per_tweet(tweet):
+        return str(tweet).count('^')
+
+    @staticmethod
+    def number_of_ampersands_per_tweet(tweet):
+        return str(tweet).count('&')
+
+    @staticmethod
+    def number_of_stars_per_tweet(tweet):
+        return str(tweet).count('*')
+
+    @staticmethod
+    def number_of_parenthesis_per_tweet(tweet):
+        return str(tweet).count('(') + str(tweet).count(')')
+
+    @staticmethod
+    def number_of_minuses_per_tweet(tweet):
+        return str(tweet).count('-')
+
+    @staticmethod
+    def number_of_underscores_per_tweet(tweet):
+        return str(tweet).count('_')
+
+    @staticmethod
+    def number_of_equals_per_tweet(tweet):
+        return str(tweet).count('=')
+
+    @staticmethod
+    def number_of_pluses_per_tweet(tweet):
+        return str(tweet).count('+')
+
+    @staticmethod
+    def number_of_brackets_per_tweet(tweet):
+        return str(tweet).count('[') + str(tweet).count(']')
+
+    @staticmethod
+    def number_of_curly_brackets_per_tweet(tweet):
+        return str(tweet).count('{') + str(tweet).count('}')
+
+    @staticmethod
+    def number_of_vertical_bars_per_tweet(tweet):
+        return str(tweet).count('|')
+
+    @staticmethod
+    def number_of_semicolons_per_tweet(tweet):
+        return str(tweet).count(';')
+
+    @staticmethod
+    def number_of_colons_per_tweet(tweet):
+        return str(tweet).count(':')
+
+    @staticmethod
+    def number_of_apostrophes_per_tweet(tweet):
+        return str(tweet).count('\'')
+
+    @staticmethod
+    def number_of_grave_accents_per_tweet(tweet):
+        return str(tweet).count('`')
+
+    @staticmethod
+    def number_of_quotation_marks_per_tweet(tweet):
+        return str(tweet).count('\"')
+
+    @staticmethod
+    def number_of_slashes_per_tweet(tweet):
+        return str(tweet).count('/') + str(tweet).count('\\')
+
+    @staticmethod
+    def number_of_less_grater_than_signs_per_tweet(tweet):
+        return str(tweet).count('<') + str(tweet).count('>')

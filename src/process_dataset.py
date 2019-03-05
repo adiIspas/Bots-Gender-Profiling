@@ -1,10 +1,9 @@
-import time
 import datetime
-import src.preparation.xml_reader as xr
-import src.preparation.text_reader as tr
-import src.processing.data_processor as dp
+import time
 
-from os import listdir
+import src.preparation.text_reader as tr
+import src.preparation.xml_reader as xr
+import src.processing.data_processor as dp
 from src.processing.fetures_extraction import Features
 
 dataset = '../data'
@@ -33,6 +32,11 @@ columns = ['number_of_words', 'number_of_characters', 'average_word_len', 'numbe
            'number_of_hash_tags', 'readability', 'number_of_digits', 'number_of_secure_links',
            'number_of_unsecured_links', 'number_of_percent', 'number_of_exclamation_marks', 'number_of_question_marks',
            'number_of_commas', 'number_of_points', 'number_of_male_terms', 'number_of_female_terms', 'number_of_emoji',
+           'number_of_tildes', 'number_of_dollars', 'number_of_circumflex_accents', 'number_of_ampersands',
+           'number_of_stars', 'number_of_parenthesis', 'number_of_minuses', 'number_of_underscores', 'number_of_equals',
+           'number_of_pluses', 'number_of_brackets', 'number_of_curly_brackets', 'number_of_vertical_bars',
+           'number_of_semicolons', 'number_of_colons', 'number_of_apostrophes', 'number_of_grave_accents',
+           'number_of_quotation_marks', 'number_of_slashes', 'number_of_less_grater_than_signs',
            'author_class']
 
 fe = Features(language)
