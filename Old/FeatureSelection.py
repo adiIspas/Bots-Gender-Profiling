@@ -7,15 +7,19 @@ lines = open(Dir+'truth-train.txt').read().splitlines()
 
 fout.write("Clasa,Diez,At,Link,Percent,NrVirgula,NrPct,NrNr,NrExclamare,NrIntrebare,he,she  ,NrLinii,LungimeMedie\n")
 
+strBot=""
+strOm =""
+
 strF=""
 strM=""
 for line in lines:
 	tokens=line.split(':::')
 	fil=open(Dir+tokens[0]+'.xml', encoding="utf8").read().splitlines()
 	
-	if(tokens[2]!="bot"):
+	if(True):
 		if(tokens[2]=="bot"):
 			fout.write("0, ")
+			strBot+=" ".join(fil)
 		if(tokens[2]=="male"):
 			fout.write("1, ")
 			strM+=" ".join(fil)
@@ -47,10 +51,19 @@ for line in lines:
 
 		
 
+strOm=strF+" "+strM
 strF=strF.lower()
 strM=strM.lower()
+
+strBot=strBot.lower()
+strOm=strOm.lower()
+
+
 str_listF=re.findall(r"[\w']+", strF)
 str_listM=re.findall(r"[\w']+", strM)
+
+str_listBot=re.findall(r"[\w']+", strBot)
+str_listOm=re.findall(r"[\w']+", strOm)
 
 
 
@@ -75,13 +88,23 @@ str_listM=re.findall(r"[\w']+", strM)
 f=Counter(str_listF)
 m=Counter(str_listM)
 
+bot=Counter(str_listBot)
+om=Counter(str_listOm)
+
 for k in f.keys():
 	f[k]=f[k]/len(str_listF)
 	
 for k in m.keys():
 	m[k]=m[k]/len(str_listM)
-f.subtract(m)
 
+for k in bot.keys():
+	bot[k]=bot[k]/len(str_listBot)
+	
+for k in om.keys():
+	om[k]=om[k]/len(str_listOm)
+	
+f.subtract(m)
+om.subtract(bot)
 #Varianta 1: facem diferenta pe countere
 #https://docs.python.org/2/library/collections.html#collections.Counter         Dif.most_common()[:-n-1:-1]#Boy
 # f.most_common(25)#Girl
