@@ -84,26 +84,46 @@ str_listBot= [ps.stem(w) for w in str_listBot]
 str_listOm= [ps.stem(w) for w in str_listOm]
 
 
+# consecOm=[]
+# consecBot=[]
+consecF=[]
+consecM=[]
 
+# for i in range(1,len(str_listBot)):
+	# consecBot.append(str_listBot[i-1]+"_"+str_listBot[i])
+# for i in range(1,len(str_listOm)):
+	# consecOm.append(str_listOm[i-1]+"_"+str_listOm[i])
+	
+for i in range(1,len(str_listF)):
+	consecF.append(str_listF[i-1]+"_"+str_listF[i])
+for i in range(1,len(str_listM)):
+	consecM.append(str_listM[i-1]+"_"+str_listM[i])
 
-
+# consBot=Counter(consecBot)
+# consOm=Counter(consecOm)
+consF=Counter(consecF)
+consM=Counter(consecM)
+bot=Counter(str_listBot)
+om=Counter(str_listOm)
 f=Counter(str_listF)
 m=Counter(str_listM)
 
-bot=Counter(str_listBot)
-om=Counter(str_listOm)
-
 for k in f.keys():
-	f[k]=f[k]/len(str_listF)
-	
+	f[k]=f[k]/len(f)
 for k in m.keys():
-	m[k]=m[k]/len(str_listM)
-
+	m[k]=m[k]/len(m)
 for k in bot.keys():
-	bot[k]=bot[k]/len(str_listBot)
-	
+	bot[k]=bot[k]/len(bot)
 for k in om.keys():
-	om[k]=om[k]/len(str_listOm)
+	om[k]=om[k]/len(om)
+# for k in consBot.keys():
+	# consBot[k]=consBot[k]/len(consBot)
+# for k in consOm.keys():
+	# consOm[k]=consOm[k]/len(consOm)
+for k in consF.keys():
+	consF[k]=consF[k]/len(consF)
+for k in consM.keys():
+	consM[k]=consM[k]/len(consM)
 	
 f.subtract(m)
 om.subtract(bot)
