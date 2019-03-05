@@ -1,62 +1,57 @@
 import re
 from collections import Counter
 
-print("1")
 Dir='PAN\\en\\';
-fout= open("x_features.txt","w")
+fout= open(Dir+"x_features.txt","w")
 lines = open(Dir+'truth-train.txt').read().splitlines()
 
-print("2")
-fout.write("Clasa,Diez,At,Link,Percent,NrVirgula,NrPct,NrNr,NrExclamare,he,she  ,NrLinii,LungimeMedie\n")
+fout.write("Clasa,Diez,At,Link,Percent,NrVirgula,NrPct,NrNr,NrExclamare,NrIntrebare,he,she  ,NrLinii,LungimeMedie\n")
 
-print("3")
 strF=""
 strM=""
 for line in lines:
 	tokens=line.split(':::')
 	fil=open(Dir+tokens[0]+'.xml', encoding="utf8").read().splitlines()
 	
-	#if(tokens[2]!="bot"):
-	if(tokens[2]=="bot"):
-		fout.write("0, ")
-	if(tokens[2]=="male"):
-		fout.write("1, ")
-		strM+=" ".join(fil)
-	if(tokens[2]=="female"):
-		fout.write("1, ")
-		strF+=" ".join(fil)
-	
-	L=[len(x) for x in fil]
-	Length=sum(L) / float(len(L));
-	# fout.write("%d, " % sum([ ("#" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("@" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("http" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("%" in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("," in x) for x in fil]))
-	# fout.write("%d, " % sum([ ("." in x) for x in fil]))
-	fout.write("%d, " % sum([ x.count("#") for x in fil]))
-	fout.write("%d, " % sum([ x.count("@") for x in fil]))
-	fout.write("%d, " % sum([ x.count("http") for x in fil]))
-	fout.write("%d, " % sum([ x.count("%") for x in fil]))
-	fout.write("%d, " % sum([ x.count(",") for x in fil]))
-	fout.write("%d, " % sum([ x.count(".") for x in fil]))
-	fout.write("%d, " % sum([ sum(c.isdigit() for c in x) for x in fil]))
-	fout.write("%d, " % sum([ x.count("!") for x in fil]))
-	fout.write("%d, " % sum([ x.count(" he ")+x.count(" his ")+x.count(" man ")+x.count(" boy ") for x in fil]))
-	fout.write("%d, " % sum([ x.count(" she ")+x.count(" her ")+x.count(" woman ")+x.count(" girl ") for x in fil]))
-	
-	fout.write("%d, " % len(fil))
-	fout.write("%d\n" % Length)
+	if(tokens[2]!="bot"):
+		if(tokens[2]=="bot"):
+			fout.write("0, ")
+		if(tokens[2]=="male"):
+			fout.write("1, ")
+			strM+=" ".join(fil)
+		if(tokens[2]=="female"):
+			fout.write("2, ")
+			strF+=" ".join(fil)
+		
+		L=[len(x) for x in fil]
+		Length=sum(L) / float(len(L));
+		# fout.write("%d, " % sum([ ("#" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("@" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("http" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("%" in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("," in x) for x in fil]))
+		# fout.write("%d, " % sum([ ("." in x) for x in fil]))
+		fout.write("%d, " % sum([ x.count("#") for x in fil]))
+		fout.write("%d, " % sum([ x.count("@") for x in fil]))
+		fout.write("%d, " % sum([ x.count("http") for x in fil]))
+		fout.write("%d, " % sum([ x.count("%") for x in fil]))
+		fout.write("%d, " % sum([ x.count(",") for x in fil]))
+		fout.write("%d, " % sum([ x.count(".") for x in fil]))
+		fout.write("%d, " % sum([ sum(c.isdigit() for c in x) for x in fil]))
+		fout.write("%d, " % sum([ x.count("!") for x in fil]))
+		fout.write("%d, " % sum([ x.count(" he ")+x.count(" his ")+x.count(" man ")+x.count(" boy ") for x in fil]))
+		fout.write("%d, " % sum([ x.count(" she ")+x.count(" her ")+x.count(" woman ")+x.count(" girl ") for x in fil]))
+		
+		fout.write("%d, " % len(fil))
+		fout.write("%d\n" % Length)
 
 		
-
-quit()
-
 
 strF=strF.lower()
 strM=strM.lower()
 str_listF=re.findall(r"[\w']+", strF)
 str_listM=re.findall(r"[\w']+", strM)
+
 
 
 #Daca faci asta e si bine, e si rau:
@@ -83,17 +78,41 @@ str_listM= [ps.stem(w) for w in str_listM]
   
 # Counter(str_listF).most_common(50)
 # Counter(str_listM).most_common(50)
-f=Counter(str_listF)
-cf=Counter(str_listF)#copie f
-m=Counter(str_listM)
-cm=Counter(str_listM)
 
-f.subtract(cm)
-m.subtract(cf)
+
+f=Counter(str_listF)
+m=Counter(str_listM)
+
+for k in f.keys():
+	f[k]=f[k]/len(str_listF)
+	
+for k in m.keys():
+	m[k]=m[k]/len(str_listM)
+f.subtract(m)
 
 #Varianta 1: facem diferenta pe countere
-m.most_common(25)
-f.most_common(25)
+#https://docs.python.org/2/library/collections.html#collections.Counter         Dif.most_common()[:-n-1:-1]#Boy
+f.most_common(25)#Girl
+f.most_common()[:-25-1:-1]#Boy
+
+
+import io
+with io.open("GirlTop50.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in f.most_common(50):
+		fout.write(w+' '+str(abs(fr))+'\n')
+with io.open("GirlTop150.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in f.most_common(150):
+		fout.write(w+' '+str(abs(fr))+'\n')
+with io.open("BoyTop50.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in f.most_common()[:-50-1:-1]:
+		fout.write(w+' '+str(abs(fr))+'\n')
+with io.open("BoyTop150.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in f.most_common()[:-150-1:-1]:
+		fout.write(w+' '+str(abs(fr))+'\n')
+
+
+f=Counter(str_listF)
+m=Counter(str_listM)
 #Varianta 2: luam care au aparut de cel putin 200 ori, dar nu mai mult de 1000 (ca dupaia sunt stopwords)
 filterF = {k:v for (k,v) in dict(f).items() if v>200 and v<1000}#nici prea populare (stopwords)
 filterM = {k:v for (k,v) in dict(m).items() if v>200 and v<1000}#nici prea nefolosite 
