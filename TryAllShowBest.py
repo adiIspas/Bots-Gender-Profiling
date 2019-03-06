@@ -22,20 +22,26 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.neighbors import NearestCentroid
 
 models = []
-models.append(('LR', LogisticRegression()))
-models.append(('LDA', LinearDiscriminantAnalysis()))
+# models.append(('LR', LogisticRegression()))
+# models.append(('LDA', LinearDiscriminantAnalysis()))
+models.append(('Knn1',     KNeighborsClassifier(1) ))
 models.append(('Knn3',     KNeighborsClassifier(3) ))
 models.append(('Knn5',     KNeighborsClassifier(5) ))
+models.append(('Knn1D',     KNeighborsClassifier(1, weights='distance') ))
 models.append(('Knn3D',     KNeighborsClassifier(3, weights='distance') ))
 models.append(('Knn5D',     KNeighborsClassifier(5, weights='distance') ))
-models.append(('LSVM',     SVC(kernel="linear")  ))
-models.append(('RBF',     SVC()  ))
-models.append(('DT',     DecisionTreeClassifier(max_depth=5) ))
-models.append(('RF',     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1) ))
-models.append(('NN',     MLPClassifier(alpha=1) ))
-models.append(('AB',     AdaBoostClassifier() ))
-models.append(('NB',     GaussianNB() ))
-models.append(('QDA',     QuadraticDiscriminantAnalysis()  ))
+models.append(('Knn7D',     KNeighborsClassifier(7, weights='distance') ))
+models.append(('Knn9D',     KNeighborsClassifier(9, weights='distance') ))
+models.append(('Knn11D',     KNeighborsClassifier(11, weights='distance') ))
+models.append(('Knn13D',     KNeighborsClassifier(13, weights='distance') ))
+# models.append(('LSVM',     SVC(kernel="linear")  ))
+# models.append(('RBF',     SVC()  ))
+# models.append(('DT',     DecisionTreeClassifier(max_depth=5) ))
+# models.append(('RF',     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1) ))
+# models.append(('NN',     MLPClassifier(alpha=1) ))
+# models.append(('AB',     AdaBoostClassifier() ))
+# models.append(('NB',     GaussianNB() ))
+# models.append(('QDA',     QuadraticDiscriminantAnalysis()  ))
 
 
 #https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html
@@ -68,15 +74,15 @@ Y= np.transpose([ round(x/2.0+0.1) for x in Y])
 
 #https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
 from sklearn.ensemble import ExtraTreesClassifier
-forest = ExtraTreesClassifier(n_estimators=250,random_state=0)
+forest = ExtraTreesClassifier(n_estimators=250)
 forest.fit(X, Y)
 importances = forest.feature_importances_
 std = np.std([tree.feature_importances_ for tree in forest.estimators_],axis=0)
 indices = np.argsort(importances)[::-1]
 
-
-
-
+# indices=[ 0,2,3,4,5,7,8,9,14,23,32,36,38,39,40]
+from random import shuffle
+shuffle(indices)
 
 #https://www.kaggle.com/willkoehrsen/visualize-a-decision-tree-w-python-scikit-learn
 
@@ -115,8 +121,8 @@ results = []
 names = []
 Subfeatures = []
 mods = []
-# for i in range(1,len(Features)):
-for i in range( round(len(Features)/4),round(len(Features)/3) ):
+for i in range(1,len(indices)):
+# for i in range( round(len(indices)/4),round(len(indices)/3) ):
 	for name, model in models:
 		#https://stackoverflow.com/questions/8386675/extracting-specific-columns-in-numpy-array
 		subset=indices[0:i]
@@ -143,41 +149,40 @@ mods=np.array(mods)[BestIndex]
 
 
 
-
-
 #https://datascience.stackexchange.com/questions/37899/sklearn-svm-how-to-get-a-list-of-the-wrong-predictions
 inds = np.arange(Y.shape[0])
-X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.2,
-                                                                         random_state=42)
-model_0=np.array(mods)[0]
-model_1=np.array(mods)[1]
-model_2=np.array(mods)[2]
-classifier_0=model_0.fit(X_train, y_train)
-classifier_1=model_1.fit(X_train, y_train)
-classifier_2=model_2.fit(X_train, y_train)
-predictions_0 = model_0.predict(X_test)
-predictions_1 = model_1.predict(X_test)
-predictions_2 = model_2.predict(X_test)
+X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(X, Y, inds, stratify=Y, test_size=0.2)
+BestModel=mods[0]
+BestModel.fit(X_train, y_train)
+BestPredict = BestModel.predict(X_test)
+
+
+#Var2
+#https://stackoverflow.com/questions/1518522/find-the-most-common-element-in-a-list
+# from statistics import mode
+from collections import Counter
+
+for mod in mods:
+	mod.fit(X_train, y_train)
+for input, prediction,index in zip (inds[idx_test], BestPredict,inds):
+	BestPredict[index] = Counter([  mod.predict( np.array(X[input]).reshape(1,-1) )[0]  for mod in mods ]).most_common(1)[0][0]
 
 
 
-for input, p0,p1,p2, label in zip (inds[idx_test], predictions_0,predictions_1,predictions_2, y_test):
-  prediction = round((p0+p1+p2)/3.0)
-  if prediction != label:
-    print(input+1, 'has been classified as ', prediction, 'and should be ', label)
+for input, prediction, label in zip (inds[idx_test], BestPredict, y_test):
+	if prediction != label:
+		#https://i.kym-cdn.com/photos/images/newsfeed/001/191/035/135.png
+		print(input+1, ' classified as ', prediction, ' is achsiualy ', label, end =" -> ")
+		print(BestModel.predict_proba( np.array(X[input]).reshape(1,-1)    ) )
+		
+		#https://stackoverflow.com/questions/35082140/preprocessing-in-scikit-learn-single-sample-depreciation-warning
 
-preds=(predictions_0+predictions_1+predictions_2)
-print( (predictions_0==y_test).mean()  ,results[0].mean())
-print( (predictions_1==y_test).mean()  ,results[1].mean())
-print( (predictions_2==y_test).mean()  ,results[2].mean())
-print( (([round(x/3.0) for x in preds])==y_test).mean() )
 
+print( (BestPredict==y_test).mean()  ,results[0].mean())
 print(names[0],Subfeatures[0])
-print(names[1],Subfeatures[1])
-print(names[2],Subfeatures[2])
 	
 from sklearn.metrics import confusion_matrix
-tn, fp, fn, tp = confusion_matrix(y_test,([round(x/3.0) for x in preds]) ).ravel()
+tn, fp, fn, tp = confusion_matrix(y_test,BestPredict ).ravel()
 print (tn, fp, fn, tp)
 
 # boxplot algorithm comparison
