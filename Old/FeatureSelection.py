@@ -88,25 +88,7 @@ str_listOm= [ps.stem(w) for w in str_listOm]
 
 print("Pas 5")
 
-# consecOm=[]
-# consecBot=[]
-consecF=[]
-consecM=[]
 
-# for i in range(1,len(str_listBot)):
-	# consecBot.append(str_listBot[i-1]+"_"+str_listBot[i])
-# for i in range(1,len(str_listOm)):
-	# consecOm.append(str_listOm[i-1]+"_"+str_listOm[i])
-	
-# for i in range(1,len(str_listF)):
-	# consecF.append(str_listF[i-1]+"_"+str_listF[i])
-# for i in range(1,len(str_listM)):
-	# consecM.append(str_listM[i-1]+"_"+str_listM[i])
-
-# consBot=Counter(consecBot)
-# consOm=Counter(consecOm)
-# consF=Counter(consecF)
-# consM=Counter(consecM)
 bot=Counter(str_listBot)
 om=Counter(str_listOm)
 f=Counter(str_listF)
@@ -121,17 +103,9 @@ for k in bot.keys():
 	bot[k]=bot[k]/len(bot)
 for k in om.keys():
 	om[k]=om[k]/len(om)
-# for k in consBot.keys():
-	# consBot[k]=consBot[k]/len(consBot)
-# for k in consOm.keys():
-	# consOm[k]=consOm[k]/len(consOm)
-# for k in consF.keys():
-	# consF[k]=consF[k]/len(consF)
-# for k in consM.keys():
-	# consM[k]=consM[k]/len(consM)
+
 	
 print("Pas 7")
-f.subtract(m)
 #Varianta 1: facem diferenta pe countere
 #https://docs.python.org/2/library/collections.html#collections.Counter         Dif.most_common()[:-n-1:-1]#Boy
 # f.most_common(25)#Girl
@@ -145,15 +119,6 @@ f.subtract(m)
 # stopWords= [ps.stem(w) for w in stopWords]
 
 import io
-# with io.open("GirlAll.txt", 'w', encoding='utf8') as fout:
-	# for w in str_listF:
-		# if w not in stopWords  and len(w) in range(4,10):
-			# fout.write(w+' ')
-# with io.open("BoyAll.txt", 'w', encoding='utf8') as fout:
-	# for w in str_listM:
-		# if w not in stopWords  and len(w) in range(4,10):
-			# fout.write(w+' ')
-
 
 with io.open("Top100Human.txt", 'w', encoding='utf8') as fout:
 	for (w,fr) in om.most_common(100):
@@ -169,6 +134,24 @@ with io.open("Top100Human-Bot.txt", 'w', encoding='utf8') as fout:
 		fout.write(w+' ')
 with io.open("Top100Bot-Human.txt", 'w', encoding='utf8') as fout:
 	for (w,fr) in om.most_common()[:-100-1:-1]:
+		fout.write(w+' ')
+
+		
+		
+with io.open("Top100Male.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in m.most_common(100):
+		fout.write(w+' ')
+with io.open("Top100Female.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in f.most_common(100):
+		fout.write(w+' ')
+		
+m.subtract(f)
+
+with io.open("Top100Male-Female.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in m.most_common(100):
+		fout.write(w+' ')
+with io.open("Top100Female-Male.txt", 'w', encoding='utf8') as fout:
+	for (w,fr) in m.most_common()[:-100-1:-1]:
 		fout.write(w+' ')
 
 
