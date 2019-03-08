@@ -92,10 +92,10 @@ shuffle(indices)
 # estimator = temp.estimators_[5]
 
 # from sklearn.tree import export_graphviz
-# export_graphviz(estimator, out_file='tree.dot', 
+# export_graphviz(estimator, out_file='tree.dot',
                 # feature_names = Features,
                 # class_names = ["Baiat","Femeie"],
-                # rounded = True, proportion = False, 
+                # rounded = True, proportion = False,
                 # filled = True)
 # from subprocess import call
 # call(['dot', '-Tpng', 'tree.dot', '-o', 'tree.png', '-Gdpi=600'])
@@ -174,7 +174,7 @@ for input, prediction, label in zip (inds[idx_test], BestPredict, y_test):
 		#https://i.kym-cdn.com/photos/images/newsfeed/001/191/035/135.png
 		print(input+1, ' classified as ', prediction, ' is achsiualy ', label, end =" -> ")
 		print(BestModel.predict_proba( np.array(X[input]).reshape(1,-1)    ) )
-		
+
 		#https://stackoverflow.com/questions/35082140/preprocessing-in-scikit-learn-single-sample-depreciation-warning
 
 

@@ -16,7 +16,7 @@ print(datetime.datetime.now())
 # X=data[:,1:]
 # Features.pop(0)#Primu e clasa
 
-f = open("train.csv")
+f = open("./data/processed/en/en_data.csv")
 Features=f.readline().split(',')
 data = np.loadtxt(f,delimiter=",")
 Features.pop(-1)#ultimu e clasa
