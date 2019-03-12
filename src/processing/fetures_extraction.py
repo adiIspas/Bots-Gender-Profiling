@@ -213,6 +213,23 @@ class Features(object):
                                              'ay', 'amigo', 'nadi', 'casa', 'mamá', 'team_yoz', 'quier', 'servitributo',
                                              'mal', 'libro', 'laleydelcorazon', 'ti', 'lucianoda', 'da', 'gusta']
 
+        self.en_free_words = ['free', 'givaway', 'gift', 'follow', 'win', 'change', 'winner', 'subscribe', 'comment',
+                              'retweet', 'competition']
+
+        self.es_free_words = ['gratis', 'givaway', 'regalo', 'seguir', 'ganar', 'cambiar', 'ganador', 'suscribirse',
+                              'comentar', 'retweet', 'competición']
+
+        self.en_political_words = ['politics', 'donald', 'Vladimir', 'trump', 'putin', 'obama', 'Us', 'USA', 'Russia',
+                                   'Clinton', 'Hillary', 'politicians', 'Catalonia', 'President', 'American', 'ISIS',
+                                   'office', 'legislation', 'Testify', 'Oath', 'scandal', 'CIA', 'CNN', 'FOX', 'video',
+                                   'Ceremony', 'Congress', 'budget', 'Administration', 'democrats', 'vote', 'rights']
+
+        self.es_political_words = ['Política', 'Donald', 'Vladimir', 'Trump', 'Putin', 'Obama', 'Europa', 'Clinton',
+                                   'Hillary', 'políticos', 'Cataluña', 'Presidente', 'América', 'ISIS', 'oficina',
+                                   'legislación', 'Testificar', 'Juramento', 'escándalo', 'CIA', 'CNN', 'FOX', 'video',
+                                   'Ceremonia', 'Congreso', 'Presupuesto', 'Administración', 'Demócratas', 'Voto',
+                                   'Derechos']
+
     def extract(self, tweets):
         number_of_words = 0
         number_of_characters = 0
@@ -260,9 +277,13 @@ class Features(object):
         number_of_words_in_female_male_popular_words = 0
         number_of_lines = 0
         number_of_money = 0
+        number_of_words_start_with_capital_letter = 0
+        number_of_free_words = 0
+        number_of_political_words = 0
 
         different_words = set()
         total_tweets = len(tweets)
+        longest_repeated_str = self.longest_repeated_substring(' '.join(tweets))
 
         for tweet in tweets:
             number_of_words += self.number_of_words_per_tweet(tweet)
@@ -316,6 +337,9 @@ class Features(object):
             different_words = self.different_words_per_tweet(different_words, tweet)
             number_of_lines += self.number_of_lines_per_tweet(tweet)
             number_of_money += self.number_of_money_per_tweet(tweet)
+            number_of_words_start_with_capital_letter += self.number_of_words_start_with_capital_letter_per_tweet(tweet)
+            number_of_free_words += self.number_of_free_words_per_tweet(tweet)
+            number_of_political_words += self.number_of_political_words_per_tweet(tweet)
 
         average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
         number_of_different_words = len(different_words) / number_of_words if number_of_words > 0 else 0
@@ -366,6 +390,12 @@ class Features(object):
         number_of_words_in_female_male_popular_words /= total_tweets
         number_of_lines /= total_tweets
         number_of_money /= total_tweets
+        number_of_words_start_with_capital_letter /= total_tweets
+        number_of_free_words /= total_tweets
+        number_of_political_words /= total_tweets
+        longest_repeated_str_len = len(longest_repeated_str)
+        number_of_longest_repeated_str = ' '.join(tweets).count(longest_repeated_str) / total_tweets
+        longest_repeated_str_mix_feature = longest_repeated_str_len * number_of_longest_repeated_str
 
         return [number_of_words, number_of_characters, average_word_len, number_of_stop_words, number_of_tags,
                 number_of_hash_tags, readability, number_of_digits, number_of_secure_links, number_of_unsecured_links,
@@ -379,7 +409,9 @@ class Features(object):
                 number_of_words_in_male_popular_words, number_of_words_in_female_popular_words,
                 number_of_words_in_bot_human_popular_words, number_of_words_in_human_bot_popular_words,
                 number_of_words_in_male_female_popular_words, number_of_words_in_female_male_popular_words,
-                number_of_lines, number_of_words_per_line, number_of_money,
+                number_of_lines, number_of_words_per_line, number_of_money, number_of_words_start_with_capital_letter,
+                number_of_free_words, number_of_political_words, longest_repeated_str_len,
+                number_of_longest_repeated_str, longest_repeated_str_mix_feature,
                 number_of_different_words]
 
     def number_of_syllables_per_tweet(self, tweet):
@@ -459,6 +491,26 @@ class Features(object):
         different_words.update(set(stemmed_words))
 
         return different_words
+
+    def number_of_free_words_per_tweet(self, tweet):
+        stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
+
+        if self.language is 'en':
+            stemmed_free_words = [self.stemmer.stem(word) for word in self.en_free_words]
+            return len([word for word in stemmed_words if word in stemmed_free_words])
+        if self.language is 'es':
+            stemmed_free_words = [self.stemmer.stem(word) for word in self.es_free_words]
+            return len([word for word in stemmed_words if word in stemmed_free_words])
+
+    def number_of_political_words_per_tweet(self, tweet):
+        stemmed_words = [self.stemmer.stem(str(word).lower()) for word in re.findall(r'\w+', tweet)]
+
+        if self.language is 'en':
+            stemmed_free_words = [self.stemmer.stem(str(word).lower()) for word in self.en_political_words]
+            return len([word for word in stemmed_words if word in stemmed_free_words])
+        if self.language is 'es':
+            stemmed_free_words = [self.stemmer.stem(str(word).lower()) for word in self.es_political_words]
+            return len([word for word in stemmed_words if word in stemmed_free_words])
 
     @staticmethod
     def number_of_words_per_tweet(tweet):
@@ -611,3 +663,51 @@ class Features(object):
     @staticmethod
     def number_of_money_per_tweet(tweet):
         return str(tweet).count('$')
+
+    @staticmethod
+    def number_of_words_start_with_capital_letter_per_tweet(tweet):
+        return len(re.findall(r"\b[A-Z]\S+", tweet))
+
+    @staticmethod
+    def longest_repeated_substring(tweets):
+        # Returns the longest repeating non-overlapping
+        # substring in str
+
+        tweets = str(tweets).lower()
+
+        n = len(tweets)
+        lcs_re = [[0 for x in range(n + 1)] for y in range(n + 1)]
+
+        res = ""  # To store result
+        res_length = 0  # To store length of result
+
+        # building table in bottom-up manner
+        index = 0
+        for i in range(1, n + 1):
+            for j in range(i + 1, n + 1):
+
+                # (j-i) > LCSRe[i-1][j-1] to remove
+                # overlapping
+                if (tweets[i - 1] == tweets[j - 1] and
+                        lcs_re[i - 1][j - 1] < (j - i)):
+                    lcs_re[i][j] = lcs_re[i - 1][j - 1] + 1
+
+                    # updating maximum length of the
+                    # substring and updating the finishing
+                    # index of the suffix
+                    if lcs_re[i][j] > res_length:
+                        res_length = lcs_re[i][j]
+                        index = max(i, index)
+
+                else:
+                    lcs_re[i][j] = 0
+
+        # If we have non-empty result, then insert
+        # all characters from first character to
+        # last character of string
+        if res_length > 0:
+            for i in range(index - res_length + 1,
+                           index + 1):
+                res = res + tweets[i - 1]
+
+        return res
