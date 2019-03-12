@@ -86,7 +86,10 @@ def get_features(language='en', dataset_type='train'):
                'number_of_words_in_human_popular_words', 'number_of_words_in_male_popular_words',
                'number_of_words_in_female_popular_words', 'number_of_words_in_bot_human_popular_words',
                'number_of_words_in_human_bot_popular_words', 'number_of_words_in_male_female_popular_words',
-               'number_of_words_in_female_male_popular_words', 'number_of_different_words',
+               'number_of_words_in_female_male_popular_words', 'number_of_lines', 'number_of_words_per_line',
+               'number_of_money', 'number_of_words_start_with_capital_letter', 'number_of_free_words',
+               'number_of_political_words', 'longest_repeated_str_len', 'number_of_longest_repeated_str',
+               'longest_repeated_str_mix_feature', 'number_of_different_words',
                'author_class']
     features = Features(language)
     author_index = 1

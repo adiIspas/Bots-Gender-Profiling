@@ -343,7 +343,7 @@ class Features(object):
 
         average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
         number_of_different_words = len(different_words) / number_of_words if number_of_words > 0 else 0
-        number_of_words_per_line = number_of_words / number_of_lines
+        number_of_words_per_line = number_of_words / number_of_lines if number_of_lines > 0 else 0
         number_of_words /= total_tweets
         number_of_characters /= total_tweets
         average_word_len /= total_tweets
@@ -411,8 +411,7 @@ class Features(object):
                 number_of_words_in_male_female_popular_words, number_of_words_in_female_male_popular_words,
                 number_of_lines, number_of_words_per_line, number_of_money, number_of_words_start_with_capital_letter,
                 number_of_free_words, number_of_political_words, longest_repeated_str_len,
-                number_of_longest_repeated_str, longest_repeated_str_mix_feature,
-                number_of_different_words]
+                number_of_longest_repeated_str, longest_repeated_str_mix_feature, number_of_different_words]
 
     def number_of_syllables_per_tweet(self, tweet):
         number_of_syllables = 0
