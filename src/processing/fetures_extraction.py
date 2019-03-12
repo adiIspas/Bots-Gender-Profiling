@@ -258,6 +258,8 @@ class Features(object):
         number_of_words_in_human_bot_popular_words = 0
         number_of_words_in_male_female_popular_words = 0
         number_of_words_in_female_male_popular_words = 0
+        number_of_lines = 0
+        number_of_money = 0
 
         different_words = set()
         total_tweets = len(tweets)
@@ -312,9 +314,12 @@ class Features(object):
             number_of_words_in_female_male_popular_words += self.number_of_words_in_female_male_popular_words_per_tweet(
                 tweet)
             different_words = self.different_words_per_tweet(different_words, tweet)
+            number_of_lines += self.number_of_lines_per_tweet(tweet)
+            number_of_money += self.number_of_money_per_tweet(tweet)
 
         average_number_of_syllables_per_word = number_of_syllables / number_of_words if number_of_words > 0 else 0
         number_of_different_words = len(different_words) / number_of_words if number_of_words > 0 else 0
+        number_of_words_per_line = number_of_words / number_of_lines
         number_of_words /= total_tweets
         number_of_characters /= total_tweets
         average_word_len /= total_tweets
@@ -359,6 +364,8 @@ class Features(object):
         number_of_words_in_human_bot_popular_words /= total_tweets
         number_of_words_in_male_female_popular_words /= total_tweets
         number_of_words_in_female_male_popular_words /= total_tweets
+        number_of_lines /= total_tweets
+        number_of_money /= total_tweets
 
         return [number_of_words, number_of_characters, average_word_len, number_of_stop_words, number_of_tags,
                 number_of_hash_tags, readability, number_of_digits, number_of_secure_links, number_of_unsecured_links,
@@ -372,6 +379,7 @@ class Features(object):
                 number_of_words_in_male_popular_words, number_of_words_in_female_popular_words,
                 number_of_words_in_bot_human_popular_words, number_of_words_in_human_bot_popular_words,
                 number_of_words_in_male_female_popular_words, number_of_words_in_female_male_popular_words,
+                number_of_lines, number_of_words_per_line, number_of_money,
                 number_of_different_words]
 
     def number_of_syllables_per_tweet(self, tweet):
@@ -595,3 +603,11 @@ class Features(object):
     @staticmethod
     def number_of_less_grater_than_signs_per_tweet(tweet):
         return str(tweet).count('<') + str(tweet).count('>')
+
+    @staticmethod
+    def number_of_lines_per_tweet(tweet):
+        return str(tweet).count('\n')
+
+    @staticmethod
+    def number_of_money_per_tweet(tweet):
+        return str(tweet).count('$')
