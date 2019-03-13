@@ -88,9 +88,11 @@ def get_features(language='en', dataset_type='train'):
                'number_of_words_in_human_bot_popular_words', 'number_of_words_in_male_female_popular_words',
                'number_of_words_in_female_male_popular_words', 'number_of_lines', 'number_of_words_per_line',
                'number_of_money', 'number_of_words_start_with_capital_letter', 'number_of_free_words',
-               'number_of_political_words', 'longest_repeated_str_len', 'number_of_longest_repeated_str',
-               'longest_repeated_str_mix_feature', 'number_of_different_words',
+               'number_of_political_words', 'tweets_to_p_grams_words_5', 'tweets_to_p_grams_words_10',
+               'tweets_to_p_grams_words_15', 'tweets_to_p_grams_words_20', 'tweets_to_p_grams_5',
+               'tweets_to_p_grams_10', 'tweets_to_p_grams_15', 'tweets_to_p_grams_20', 'number_of_different_words',
                'author_class']
+
     features = Features(language)
     author_index = 1
     total_authors = len(authors_tweets)
@@ -111,10 +113,10 @@ def get_features(language='en', dataset_type='train'):
     print('--- Total time of execution:  %s ---' % (datetime.timedelta(seconds=time.time() - start_time)))
 
 
-split_dataset(language='en', train_size=.8)
-split_dataset(language='es', train_size=.8)
+# split_dataset(language='en', train_size=.8)
+# split_dataset(language='es', train_size=.8)
 
-get_features(language='en', dataset_type='train_80')
-get_features(language='en', dataset_type='dev_20')
-get_features(language='es', dataset_type='train_80')
-get_features(language='es', dataset_type='dev_20')
+get_features(language='en', dataset_type='train-new')
+get_features(language='en', dataset_type='dev-new')
+# get_features(language='es', dataset_type='train-new')
+# get_features(language='es', dataset_type='dev-new')

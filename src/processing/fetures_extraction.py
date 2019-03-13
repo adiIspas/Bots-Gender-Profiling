@@ -1,4 +1,5 @@
 import re
+from collections import deque, Counter
 
 import emoji
 import pyphen
@@ -219,6 +220,10 @@ class Features(object):
         self.es_free_words = ['gratis', 'givaway', 'regalo', 'seguir', 'ganar', 'cambiar', 'ganador', 'suscribirse',
                               'comentar', 'retweet', 'competición']
 
+        self.en_free_words = [self.stemmer.stem(word) for word in self.en_free_words]
+
+        self.es_free_words = [self.stemmer.stem(word) for word in self.es_free_words]
+
         self.en_political_words = ['politics', 'donald', 'Vladimir', 'trump', 'putin', 'obama', 'Us', 'USA', 'Russia',
                                    'Clinton', 'Hillary', 'politicians', 'Catalonia', 'President', 'American', 'ISIS',
                                    'office', 'legislation', 'Testify', 'Oath', 'scandal', 'CIA', 'CNN', 'FOX', 'video',
@@ -229,6 +234,10 @@ class Features(object):
                                    'legislación', 'Testificar', 'Juramento', 'escándalo', 'CIA', 'CNN', 'FOX', 'video',
                                    'Ceremonia', 'Congreso', 'Presupuesto', 'Administración', 'Demócratas', 'Voto',
                                    'Derechos']
+
+        self.en_political_words = [self.stemmer.stem(str(word).lower()) for word in self.en_political_words]
+
+        self.es_political_words = [self.stemmer.stem(str(word).lower()) for word in self.es_political_words]
 
     def extract(self, tweets):
         number_of_words = 0
@@ -283,7 +292,7 @@ class Features(object):
 
         different_words = set()
         total_tweets = len(tweets)
-        longest_repeated_str = self.longest_repeated_substring(' '.join(tweets))
+        # longest_repeated_str = self.longest_repeated_substring(' '.join(tweets))
 
         for tweet in tweets:
             number_of_words += self.number_of_words_per_tweet(tweet)
@@ -393,9 +402,16 @@ class Features(object):
         number_of_words_start_with_capital_letter /= total_tweets
         number_of_free_words /= total_tweets
         number_of_political_words /= total_tweets
-        longest_repeated_str_len = len(longest_repeated_str)
-        number_of_longest_repeated_str = ' '.join(tweets).count(longest_repeated_str) / total_tweets
-        longest_repeated_str_mix_feature = longest_repeated_str_len * number_of_longest_repeated_str
+
+        full_text = ' '.join(tweets)
+        tweets_to_p_grams_words_5, tweets_to_p_grams_words_10, tweets_to_p_grams_words_15, tweets_to_p_grams_words_20 \
+            = [self.most_common(self.tweets_to_p_grams_words(full_text, i)) for i in [5, 10, 15, 20]]
+        tweets_to_p_grams_5, tweets_to_p_grams_10, tweets_to_p_grams_15, tweets_to_p_grams_20 \
+            = [self.most_common(self.tweets_to_p_grams(full_text, i)) for i in [5, 10, 15, 20]]
+
+        # longest_repeated_str_len = len(longest_repeated_str)
+        # number_of_longest_repeated_str = ' '.join(tweets).count(longest_repeated_str) / total_tweets
+        # longest_repeated_str_mix_feature = longest_repeated_str_len * number_of_longest_repeated_str
 
         return [number_of_words, number_of_characters, average_word_len, number_of_stop_words, number_of_tags,
                 number_of_hash_tags, readability, number_of_digits, number_of_secure_links, number_of_unsecured_links,
@@ -410,8 +426,9 @@ class Features(object):
                 number_of_words_in_bot_human_popular_words, number_of_words_in_human_bot_popular_words,
                 number_of_words_in_male_female_popular_words, number_of_words_in_female_male_popular_words,
                 number_of_lines, number_of_words_per_line, number_of_money, number_of_words_start_with_capital_letter,
-                number_of_free_words, number_of_political_words, longest_repeated_str_len,
-                number_of_longest_repeated_str, longest_repeated_str_mix_feature, number_of_different_words]
+                number_of_free_words, number_of_political_words, tweets_to_p_grams_words_5, tweets_to_p_grams_words_10,
+                tweets_to_p_grams_words_15, tweets_to_p_grams_words_20, tweets_to_p_grams_5, tweets_to_p_grams_10,
+                tweets_to_p_grams_15, tweets_to_p_grams_20, number_of_different_words]
 
     def number_of_syllables_per_tweet(self, tweet):
         number_of_syllables = 0
@@ -495,21 +512,17 @@ class Features(object):
         stemmed_words = [self.stemmer.stem(word) for word in re.findall(r'\w+', tweet)]
 
         if self.language is 'en':
-            stemmed_free_words = [self.stemmer.stem(word) for word in self.en_free_words]
-            return len([word for word in stemmed_words if word in stemmed_free_words])
+            return len([word for word in stemmed_words if word in self.en_free_words])
         if self.language is 'es':
-            stemmed_free_words = [self.stemmer.stem(word) for word in self.es_free_words]
-            return len([word for word in stemmed_words if word in stemmed_free_words])
+            return len([word for word in stemmed_words if word in self.es_free_words])
 
     def number_of_political_words_per_tweet(self, tweet):
         stemmed_words = [self.stemmer.stem(str(word).lower()) for word in re.findall(r'\w+', tweet)]
 
         if self.language is 'en':
-            stemmed_free_words = [self.stemmer.stem(str(word).lower()) for word in self.en_political_words]
-            return len([word for word in stemmed_words if word in stemmed_free_words])
+            return len([word for word in stemmed_words if word in self.en_political_words])
         if self.language is 'es':
-            stemmed_free_words = [self.stemmer.stem(str(word).lower()) for word in self.es_political_words]
-            return len([word for word in stemmed_words if word in stemmed_free_words])
+            return len([word for word in stemmed_words if word in self.es_political_words])
 
     @staticmethod
     def number_of_words_per_tweet(tweet):
@@ -668,45 +681,84 @@ class Features(object):
         return len(re.findall(r"\b[A-Z]\S+", tweet))
 
     @staticmethod
+    def tweets_to_p_grams_words(tweets, p_gram=5):
+        one_long_tweet = ' '.join(tweets)
+        one_long_tweet = one_long_tweet.lower()
+        one_long_tweet = re.sub(r'^https:\/\/.*[\r\n]*', 'secure', one_long_tweet)
+        one_long_tweet = re.sub(r'^http:\/\/.*[\r\n]*', 'unsecure', one_long_tweet)
+        one_long_tweet = one_long_tweet.split()
+        return Counter([' '.join(one_long_tweet[i:i + p_gram]) for i in range(0, len(one_long_tweet) - p_gram + 1)])
+
+    @staticmethod
+    def tweets_to_p_grams(tweets, p_gram=3):
+        one_long_tweet = ' '.join(tweets)
+        one_long_tweet = one_long_tweet.lower()
+        one_long_tweet = re.sub(r'^https:\/\/.*[\r\n]*', 'secure', one_long_tweet)
+        one_long_tweet = re.sub(r'^http:\/\/.*[\r\n]*', 'unsecure', one_long_tweet)
+        one_long_tweet = ' '.join(one_long_tweet.split())
+        return Counter([one_long_tweet[i:i + p_gram] for i in range(0, len(one_long_tweet) - p_gram + 1)])
+
+    @staticmethod
+    def most_common(counter):
+        if len(counter.most_common(1)) == 0:
+            return 0
+        return counter.most_common(1)[0][1]
+
+    @staticmethod
     def longest_repeated_substring(tweets):
-        # Returns the longest repeating non-overlapping
-        # substring in str
+        # # Returns the longest repeating non-overlapping
+        # # substring in str
+        #
+        # tweets = str(tweets).lower()
+        #
+        # n = len(tweets)
+        # lcs_re = [[0 for x in range(n + 1)] for y in range(n + 1)]
+        #
+        # res = ""  # To store result
+        # res_length = 0  # To store length of result
+        #
+        # # building table in bottom-up manner
+        # index = 0
+        # for i in range(1, n + 1):
+        #     for j in range(i + 1, n + 1):
+        #
+        #         # (j-i) > LCSRe[i-1][j-1] to remove
+        #         # overlapping
+        #         if (tweets[i - 1] == tweets[j - 1] and
+        #                 lcs_re[i - 1][j - 1] < (j - i)):
+        #             lcs_re[i][j] = lcs_re[i - 1][j - 1] + 1
+        #
+        #             # updating maximum length of the
+        #             # substring and updating the finishing
+        #             # index of the suffix
+        #             if lcs_re[i][j] > res_length:
+        #                 res_length = lcs_re[i][j]
+        #                 index = max(i, index)
+        #
+        #         else:
+        #             lcs_re[i][j] = 0
+        #
+        # # If we have non-empty result, then insert
+        # # all characters from first character to
+        # # last character of string
+        # if res_length > 0:
+        #     for i in range(index - res_length + 1,
+        #                    index + 1):
+        #         res = res + tweets[i - 1]
+        #
+        # return res
 
-        tweets = str(tweets).lower()
-
-        n = len(tweets)
-        lcs_re = [[0 for x in range(n + 1)] for y in range(n + 1)]
-
-        res = ""  # To store result
-        res_length = 0  # To store length of result
-
-        # building table in bottom-up manner
-        index = 0
-        for i in range(1, n + 1):
-            for j in range(i + 1, n + 1):
-
-                # (j-i) > LCSRe[i-1][j-1] to remove
-                # overlapping
-                if (tweets[i - 1] == tweets[j - 1] and
-                        lcs_re[i - 1][j - 1] < (j - i)):
-                    lcs_re[i][j] = lcs_re[i - 1][j - 1] + 1
-
-                    # updating maximum length of the
-                    # substring and updating the finishing
-                    # index of the suffix
-                    if lcs_re[i][j] > res_length:
-                        res_length = lcs_re[i][j]
-                        index = max(i, index)
-
+        l = list(tweets)
+        d = deque(tweets[1:])
+        match = []
+        longest_match = []
+        while d:
+            for i, item in enumerate(d):
+                if l[i] == item:
+                    match.append(item)
                 else:
-                    lcs_re[i][j] = 0
-
-        # If we have non-empty result, then insert
-        # all characters from first character to
-        # last character of string
-        if res_length > 0:
-            for i in range(index - res_length + 1,
-                           index + 1):
-                res = res + tweets[i - 1]
-
-        return res
+                    if len(longest_match) < len(match):
+                        longest_match = match
+                    match = []
+            d.popleft()
+        return ''.join(longest_match)
