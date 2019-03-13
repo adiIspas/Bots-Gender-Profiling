@@ -116,7 +116,7 @@ def get_features(language='en', dataset_type='train'):
 # split_dataset(language='en', train_size=.8)
 # split_dataset(language='es', train_size=.8)
 
-get_features(language='en', dataset_type='train-new')
-get_features(language='en', dataset_type='dev-new')
-# get_features(language='es', dataset_type='train-new')
-# get_features(language='es', dataset_type='dev-new')
+get_features(language='en', dataset_type='train')
+get_features(language='en', dataset_type='dev')
+get_features(language='es', dataset_type='train')
+get_features(language='es', dataset_type='dev')
