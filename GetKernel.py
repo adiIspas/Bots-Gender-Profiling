@@ -99,36 +99,6 @@ for line in linesTrain+linesTest:
 	
 print('--- Cached:  %s ---' % (datetime.timedelta(seconds=time.time() - start_time)))
 
-
-
-
-#<SEPARAT>
-fisier=Dir+(linesTrain[0].split(':::'))[0]+'.xml'
-for p in range(2,50):
-	temp=XML2Pgrams(fisier,p)
-	
-	
-	start_time = time.time()
-	for i in range(100):
-		KernelFrom2ListsIntersect(temp,temp)
-	print('p: ',p,' KernelFrom2ListsIntersect %s' % (datetime.timedelta(seconds=40000*(time.time() - start_time))   ))
-	
-	
-	start_time = time.time()
-	for i in range(100):
-		KernelFrom2ListsSpectrum(temp,temp)
-	print('p: ',p,' KernelFrom2ListsSpectrum %s' % (datetime.timedelta(seconds=40000*(time.time() - start_time))   ))
-	
-	
-	start_time = time.time()
-	for i in range(100):
-		KernelFrom2ListsPresence(temp,temp)
-	print('p: ',p,' KernelFrom2ListsPresence %s' % (datetime.timedelta(seconds=40000*(time.time() - start_time))   ))
-	print('\n')
-
-#</SEPARAT>
-	
-	
 	
 	
 for i in range(N):
