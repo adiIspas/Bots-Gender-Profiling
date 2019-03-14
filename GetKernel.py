@@ -13,10 +13,10 @@ linesTest = open(Dir+'truth-dev.txt').read().splitlines()
 linesTrain = open(Dir+'truth-train.txt').read().splitlines()
 start_time = time.time()
 
-FILENAME="Kernel3.txt"
+FILENAME="Kernel2I.txt"
 
 
-def XML2Pgrams(file,pgram=3):
+def XML2Pgrams(file,pgram=2):
 	tweets=reader.get_tweets(file)
 	oneLongTweet=' '.join(tweets)
 	oneLongTweet = oneLongTweet.lower()
@@ -46,10 +46,21 @@ def KernelFrom2ListsIntersect(A,B):
 	ret=0
 	if(len(A)<len(B)):
 		for pair in A.keys():
-			ret+=min(A[pair],B[pair])
+			a=A[pair]
+			b=B[pair]
+			if(a<b):
+				ret+=a
+			else:
+				ret+=b
+			# ret+=min(A[pair],B[pair])
 	else:
 		for pair in B.keys():
-			ret+=min(A[pair],B[pair])
+			a=A[pair]
+			b=B[pair]
+			if(a<b):
+				ret+=a
+			else:
+				ret+=b
 	return ret
 def KernelFrom2ListsSpectrum(A,B):
 	ret=0
@@ -90,11 +101,41 @@ print('--- Cached:  %s ---' % (datetime.timedelta(seconds=time.time() - start_ti
 
 
 
+
+#<SEPARAT>
+fisier=Dir+(linesTrain[0].split(':::'))[0]+'.xml'
+for p in range(2,50):
+	temp=XML2Pgrams(fisier,p)
+	
+	
+	start_time = time.time()
+	for i in range(100):
+		KernelFrom2ListsIntersect(temp,temp)
+	print('p: ',p,' KernelFrom2ListsIntersect %s' % (datetime.timedelta(seconds=40000*(time.time() - start_time))   ))
+	
+	
+	start_time = time.time()
+	for i in range(100):
+		KernelFrom2ListsSpectrum(temp,temp)
+	print('p: ',p,' KernelFrom2ListsSpectrum %s' % (datetime.timedelta(seconds=40000*(time.time() - start_time))   ))
+	
+	
+	start_time = time.time()
+	for i in range(100):
+		KernelFrom2ListsPresence(temp,temp)
+	print('p: ',p,' KernelFrom2ListsPresence %s' % (datetime.timedelta(seconds=40000*(time.time() - start_time))   ))
+	print('\n')
+
+#</SEPARAT>
+	
+	
+	
+	
 for i in range(N):
 	print(100.0*i/N)
 	print('--- Cached:  %s ---' % (datetime.timedelta(seconds=time.time() - start_time)))
 	for j in range(i,N):
-		Kernel[i][j]=KernelFrom2ListsSpectrum(Cache[i],Cache[j])
+		Kernel[i][j]=KernelFrom2ListsIntersect(Cache[i],Cache[j])
 		Kernel[j][i]=Kernel[i][j]
 
 		
