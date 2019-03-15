@@ -1,6 +1,6 @@
 import datetime
 import time
-from math import sqrt
+from math import sqrt, ceil
 
 import numpy as np
 from sklearn.svm import NuSVC
@@ -14,7 +14,7 @@ class NuSVClassifier(object):
         self.classifier = NuSVC(self.miu, kernel='precomputed')
 
         self.language = language
-        self.kernel_sizes = [4]
+        self.kernel_sizes = [1]
         self.kernel_path = './data/processed/' + language + '/kernel/'
 
         self.train_path = './data/raw/' + language + '/'
@@ -69,14 +69,19 @@ class NuSVClassifier(object):
         xml_files = xml_files_train + xml_files_test
 
         self.__init_p_grams(xml_files, p_gram)
-        for i in range(self.dataset_size):
-            percent = str(round(100.0 * i / self.dataset_size, 2))
-            print('Cached', percent, '% in', datetime.timedelta(seconds=time.time() - start_time))
 
+        progress = set()
+        print('Start creating kernel with p_gram: ', p_gram)
+        for i in range(self.dataset_size):
             for j in range(i, self.dataset_size):
                 # compute_intersection_kernel should be pass as param method
                 self.kernel[i][j] = Kernel.compute_intersection_kernel(self.cache[i], self.cache[j])
                 self.kernel[j][i] = self.kernel[i][j]
+
+            percent = int(ceil((i / self.dataset_size) * 100.0))
+            if percent > 0 and percent % 5 == 0 and percent not in progress:
+                print('Created', percent, '% from kernel in', datetime.timedelta(seconds=time.time() - start_time))
+                progress.add(percent)
 
         self.__normalize_kernel()
 

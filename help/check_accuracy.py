@@ -1,11 +1,12 @@
 import os
+import sys
 import xml.etree.ElementTree as ET
 
 from sklearn.metrics import accuracy_score
 
-language = 'en'
+language = sys.argv[1]
 pred_path = '../' + language + '/'
-test_truth_file = '../test/truth.txt'
+test_truth_file = '../test/truth-' + language + '.txt'
 
 test_labels = dict()
 with open(test_truth_file, 'r') as file:

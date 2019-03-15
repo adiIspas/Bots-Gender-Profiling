@@ -1,6 +1,6 @@
 import shutil
 
-language = 'en'
+language = 'en_initial'
 test_path = '../test/'
 train_path = '../train/'
 
