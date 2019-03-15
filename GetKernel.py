@@ -13,10 +13,10 @@ linesTest = open(Dir+'truth-dev.txt').read().splitlines()
 linesTrain = open(Dir+'truth-train.txt').read().splitlines()
 start_time = time.time()
 
-FILENAME="Kernel2I.txt"
+FILENAME="Kernel_1_K_norm.txt"
 
 
-def XML2Pgrams(file,pgram=2):
+def XML2Pgrams(file,pgram=1):
 	tweets=reader.get_tweets(file)
 	oneLongTweet=' '.join(tweets)
 	oneLongTweet = oneLongTweet.lower()
@@ -131,8 +131,9 @@ print('--- Cached:  %s ---' % (datetime.timedelta(seconds=time.time() - start_ti
 	
 	
 for i in range(N):
-	print(100.0*i/N)
-	print('--- Cached:  %s ---' % (datetime.timedelta(seconds=time.time() - start_time)))
+	if i%100==0:
+		print(100.0*i/N)
+		print('--- Creating:  %s ---' % (datetime.timedelta(seconds=time.time() - start_time)))
 	for j in range(i,N):
 		Kernel[i][j]=KernelFrom2ListsIntersect(Cache[i],Cache[j])
 		Kernel[j][i]=Kernel[i][j]
