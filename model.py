@@ -3,6 +3,7 @@ import time
 from math import sqrt
 
 import numpy as np
+from sklearn.svm import NuSVC
 
 import rw_operations
 
@@ -10,6 +11,8 @@ import rw_operations
 class NuSVClassifier(object):
     def __init__(self, language, test_path):
         self.miu = 0.01
+        self.classifier = NuSVC(self.miu, kernel='precomputed')
+
         self.language = language
         self.kernel_sizes = [1]
         self.kernel_path = './data/processed/' + language + '/kernel/'
@@ -17,6 +20,7 @@ class NuSVClassifier(object):
         self.train_path = './data/raw/' + language + '/'
         self.truth_file_path = self.train_path + 'truth.txt'
         self.train_data_info = rw_operations.get_train_data_info(self.truth_file_path)
+        self.train_labels = DataInfo.extract_labels(self.train_data_info)
 
         self.dataset_test_path = test_path
         self.test_data_info = rw_operations.get_test_data_info(self.dataset_test_path)
@@ -67,7 +71,8 @@ class NuSVClassifier(object):
             self.kernel[i][i] = 1
 
     def fit(self):
-        pass
+        train_size = len(self.train_data_info)
+        self.classifier.fit(self.kernel[0:train_size, 0:train_size], self.train_labels)
 
     def predict(self):
         return [Prediction('b2d5748083d6fdffec6c2d68d4d4442d', self.language, 0),
@@ -112,6 +117,16 @@ class DataInfo(object):
             self.gender = token[2]
         else:
             self.author_id = token
+
+    @staticmethod
+    def extract_labels(data_info):
+        genders = [info.gender for info in data_info]
+
+        labels = []
+        for gender in genders:
+            labels.append(['bot', 'male', 'female'].index(gender.strip()))
+
+        return labels
 
 
 class Kernel(object):
