@@ -8,7 +8,7 @@ test_path = sys.argv[2]
 
 print('Run with params\n language:', language, '\n', 'test_path:', test_path)
 
-classifier = model.NuSVClassifier(language, test_path, True)
+classifier = model.NuSVClassifier(language, test_path)
 classifier.fit()
 
 predictions = classifier.predict()
