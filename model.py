@@ -12,7 +12,7 @@ class NuSVClassifier(object):
         self.miu = 0.01
         self.language = language
         self.kernel_sizes = [1]
-        self.kernel_path = './data/processed/' + language + '/kernel'
+        self.kernel_path = './data/processed/' + language + '/kernel/'
 
         self.train_path = './data/raw/' + language + '/'
         self.truth_file_path = self.train_path + 'truth.txt'
