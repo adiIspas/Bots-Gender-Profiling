@@ -14,7 +14,7 @@ class NuSVClassifier(object):
         self.classifier = NuSVC(self.miu, kernel='precomputed')
 
         self.language = language
-        self.kernel_sizes = [1]
+        self.kernel_sizes = [4]
         self.kernel_path = './data/processed/' + language + '/kernel/'
 
         self.train_path = './data/raw/' + language + '/'

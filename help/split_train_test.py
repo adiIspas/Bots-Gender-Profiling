@@ -1,10 +1,12 @@
 import shutil
 
-dataset_path = './data/raw/en/'
-path_train = './data/raw/en/truth-train.txt'
-path_test = './data/raw/en/truth-dev.txt'
-test_path = './test/'
-train_path = './train/'
+language = 'en'
+test_path = '../test/'
+train_path = '../train/'
+
+dataset_path = '../data/raw/' + language + '/'
+path_train = '../data/raw/' + language + '/' + 'truth-train.txt'
+path_test = '../data/raw/' + language + '/' + 'truth-dev.txt'
 
 with open(path_train, 'r') as train_file:
     files = train_file.readlines()

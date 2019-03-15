@@ -3,8 +3,9 @@ import xml.etree.ElementTree as ET
 
 from sklearn.metrics import accuracy_score
 
-test_truth_file = './test/truth.txt'
-pred_path = './en/'
+language = 'en'
+pred_path = '../' + language + '/'
+test_truth_file = '../test/truth.txt'
 
 test_labels = dict()
 with open(test_truth_file, 'r') as file:
@@ -16,7 +17,6 @@ with open(test_truth_file, 'r') as file:
 
 pred_labels = dict()
 pred_files = os.listdir(pred_path)
-
 for file in pred_files:
     data = ET.parse(pred_path + file).getroot()
     attributes = data.attrib
