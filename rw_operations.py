@@ -22,12 +22,7 @@ def tweets_to_p_grams(tweets, p_gram=3):
     text = re.sub(r'^http:\/\/.*[\r\n]*', 'unsecure', text)
     text = ' '.join(text.split())
 
-    counter = Counter([text[i:i + p_gram] for i in range(0, len(text) - p_gram + 1)])
-    norm = 1 + sum(counter.values())
-    for pair in counter.keys():
-        counter[pair] /= norm
-
-    return counter
+    return Counter([text[i:i + p_gram] for i in range(0, len(text) - p_gram + 1)])
 
 
 def get_train_data_info(truth_file_path):

@@ -9,8 +9,8 @@ import rw_operations
 
 
 class NuSVClassifier(object):
-    def __init__(self, language, test_path, load_kernel=False):
-        self.miu = 0.01
+    def __init__(self, language, test_path, miu=0.01, load_kernel=False):
+        self.miu = miu
         self.classifier = NuSVC(self.miu, kernel='precomputed')
 
         self.language = language
@@ -160,16 +160,16 @@ class Kernel(object):
                 a = s[pair]
                 b = t[pair]
                 if a < b:
-                    ret += a / b
+                    ret += a
                 else:
-                    ret += b / a
+                    ret += b
         else:
             for pair in t.keys():
                 a = s[pair]
                 b = t[pair]
                 if a < b:
-                    ret += a / b
+                    ret += a
                 else:
-                    ret += b / a
+                    ret += b
 
         return ret
