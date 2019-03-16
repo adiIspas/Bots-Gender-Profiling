@@ -14,7 +14,7 @@ class NuSVClassifier(object):
         self.classifier = NuSVC(self.miu, kernel='precomputed')
 
         self.language = language
-        self.kernel_sizes = [1]
+        self.kernel_sizes = [4]
         self.kernel_path = './data/processed/' + language + '/kernel/'
 
         self.train_path = './data/raw/' + language + '/'
@@ -23,12 +23,15 @@ class NuSVClassifier(object):
         self.train_labels = DataInfo.extract_labels(self.train_data_info)
 
         self.dataset_test_path = test_path
-        self.test_data_info = rw_operations.get_test_data_info(self.dataset_test_path)
+        self.test_data_info = rw_operations.get_test_data_info(self.language, self.dataset_test_path)
         self.dataset_size = len(self.train_data_info) + len(self.test_data_info)
 
         self.cache = np.empty([self.dataset_size, ], dtype=object)
         self.kernel = np.empty([self.dataset_size, self.dataset_size], dtype=float)
         self.computed_kernel = np.zeros([self.dataset_size, self.dataset_size], dtype=float)
+
+        print('Kernel shape:', self.kernel.shape)
+        print('Computed kernel shape:', self.computed_kernel.shape)
 
         self.compute_kernel(load_kernel)
 
@@ -57,6 +60,7 @@ class NuSVClassifier(object):
         elif load_kernel is True:
             for size in self.kernel_sizes:
                 self.load_kernel(size)
+                print('Loaded kernel shape:', self.kernel.shape)
                 self.computed_kernel += self.kernel
 
         self.computed_kernel /= len(self.kernel_sizes)
@@ -156,16 +160,16 @@ class Kernel(object):
                 a = s[pair]
                 b = t[pair]
                 if a < b:
-                    ret += a
+                    ret += a / b
                 else:
-                    ret += b
+                    ret += b / a
         else:
             for pair in t.keys():
                 a = s[pair]
                 b = t[pair]
                 if a < b:
-                    ret += a
+                    ret += a / b
                 else:
-                    ret += b
+                    ret += b / a
 
         return ret

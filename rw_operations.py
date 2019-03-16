@@ -22,7 +22,12 @@ def tweets_to_p_grams(tweets, p_gram=3):
     text = re.sub(r'^http:\/\/.*[\r\n]*', 'unsecure', text)
     text = ' '.join(text.split())
 
-    return Counter([text[i:i + p_gram] for i in range(0, len(text) - p_gram + 1)])
+    counter = Counter([text[i:i + p_gram] for i in range(0, len(text) - p_gram + 1)])
+    norm = 1 + sum(counter.values())
+    for pair in counter.keys():
+        counter[pair] /= norm
+
+    return counter
 
 
 def get_train_data_info(truth_file_path):
@@ -38,14 +43,18 @@ def get_train_data_info(truth_file_path):
     return train_data_info
 
 
-def get_test_data_info(dataset_test_path):
+def get_test_data_info(language, dataset_test_path):
     test_data_info = []
 
     train_files = [file for file in os.listdir(dataset_test_path) if file.endswith('.xml')]
 
     for file in train_files:
+        data = ET.parse(dataset_test_path + file).getroot()
+        lang = data.attrib['lang']
         author_id = file.split('.')[0]
-        test_data_info.append(model.DataInfo(author_id))
+
+        if lang == language:
+            test_data_info.append(model.DataInfo(author_id))
 
     return test_data_info
 
