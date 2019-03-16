@@ -17,7 +17,8 @@ class NuSVClassifier(object):
         self.kernel_sizes = [1]
         self.kernel_path = './data/processed/' + language + '/kernel/'
 
-        self.train_path = './data/raw/' + language + '/'
+        self.train_path = '/media/training-datasets/author-profiling/pan19-author-profiling-training-2019-02-18/' + \
+                          language + '/'
         self.truth_file_path = self.train_path + 'truth.txt'
         self.train_data_info = rw_operations.get_train_data_info(self.truth_file_path)
         self.train_labels = DataInfo.extract_labels(self.train_data_info)
@@ -160,16 +161,16 @@ class Kernel(object):
                 a = s[pair]
                 b = t[pair]
                 if a < b:
-                    ret += a
+                    ret += a / b
                 else:
-                    ret += b
+                    ret += b / a
         else:
             for pair in t.keys():
                 a = s[pair]
                 b = t[pair]
                 if a < b:
-                    ret += a
+                    ret += a / b
                 else:
-                    ret += b
+                    ret += b / a
 
         return ret

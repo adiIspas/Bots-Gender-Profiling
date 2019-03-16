@@ -3,13 +3,30 @@ import sys
 import model
 import rw_operations
 
-language = sys.argv[1]
-test_path = sys.argv[2]
+input_dataset = sys.argv[2]
+output_dir = sys.argv[4]
 
-print('Run with params\n language:', language, '\n', 'test_path:', test_path)
+if not str(input_dataset).endswith('/'):
+    input_dataset += '/'
+if not str(output_dir).endswith('/'):
+    output_dir += '/'
 
-classifier = model.NuSVClassifier(language, test_path)
+print('Run with params\n input_dataset:', input_dataset, '\n', 'output_dir:', output_dir)
+
+
+language = 'en'
+print('Train and predict for language: ', language)
+classifier = model.NuSVClassifier(language, input_dataset)
 classifier.fit()
 
 predictions = classifier.predict()
-rw_operations.save_predictions(predictions, language)
+rw_operations.save_predictions(predictions, language, output_dir)
+
+
+language = 'es'
+print('Train and predict for language: ', language)
+classifier = model.NuSVClassifier(language, input_dataset)
+classifier.fit()
+
+predictions = classifier.predict()
+rw_operations.save_predictions(predictions, language, output_dir)

@@ -22,7 +22,12 @@ def tweets_to_p_grams(tweets, p_gram=3):
     text = re.sub(r'^http:\/\/.*[\r\n]*', 'unsecure', text)
     text = ' '.join(text.split())
 
-    return Counter([text[i:i + p_gram] for i in range(0, len(text) - p_gram + 1)])
+    counter = Counter([text[i:i + p_gram] for i in range(0, len(text) - p_gram + 1)])
+    norm = 1 + sum(counter.values())
+    for pair in counter.keys():
+        counter[pair] /= norm
+
+    return counter
 
 
 def get_train_data_info(truth_file_path):
@@ -54,9 +59,13 @@ def get_test_data_info(language, dataset_test_path):
     return test_data_info
 
 
-def save_predictions(predictions, language):
-    if not os.path.exists(language):
-        os.makedirs(language)
+def save_predictions(predictions, language, output_dir):
+    print('Save predictions for language: ', language)
+    output_dir = output_dir + language
+    os.makedirs(os.path.dirname(output_dir), exist_ok=True)
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     for prediction in predictions:
         data = ET.Element('author')
@@ -65,12 +74,15 @@ def save_predictions(predictions, language):
         data.set('type', prediction.type)
         data.set('gender', prediction.gender)
 
-        author_file = open(language + '/' + prediction.id + '.xml', 'wb')
+        author_file = open(output_dir + '/' + prediction.id + '.xml', 'wb')
         author_file.write(ET.tostring(data))
 
 
 def save_kernel(file_path, kernel):
     kernel_size = len(kernel)
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    print('Save kernel')
+
     with open(file_path, 'w+') as kernel_file:
         for i in range(kernel_size):
             for j in range(kernel_size):
