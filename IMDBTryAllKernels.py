@@ -129,7 +129,7 @@ Kernel=np.empty([N,N], dtype=float)
 Cache=np.empty([N, ],dtype=object)
 Y=np.empty([N, ],dtype=int)
 
-for pgram in range(1,10):#2 
+for pgram in range(1,13):#2 
 	for normalizare in [False,True]:
 
 		i=0
@@ -144,7 +144,7 @@ for pgram in range(1,10):#2
 			if normalizare:
 				norma=1+sum(Cache[i].values())
 				for pair in Cache[i].keys():
-					Cache[i][pair]/=norma
+					Cache[i][pair]/=norma		
 			i=i+1
 
 			
