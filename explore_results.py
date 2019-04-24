@@ -2,10 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # txt file format [pgram, normalizare, kernelFunc, acc]
-percent = '1'
+percent = '10'
 filename = 'IMDB_Procent' + percent + '.txt'
 function_name_to_replace = 'KernelFrom2Lists'
-is_max = True
+is_max = False
 
 results = pd.read_csv(filename, sep=' ', header=None)
 
@@ -34,12 +34,24 @@ axes.plot(max_data_frame['acc'])
 plt.savefig('max-acc-percent' + percent + '.png')
 
 # 1%
-functions_to_keep_max = ['NIntersect', 'Presence', 'K3RN3LSQRT', 'NK3RN3LSQRT']
-functions_to_keep_mean = ['NIntersect', 'Spectrum', 'NK3RN3L', 'K3RN3LSQRT']
+# functions_to_keep_max = ['NIntersect', 'Presence', 'K3RN3LSQRT', 'NK3RN3LSQRT']
+# functions_to_keep_mean = ['NIntersect', 'Spectrum', 'NK3RN3L', 'K3RN3LSQRT']
 
 # 5%
 # functions_to_keep_max = ['NK3RN3LSQRT', 'K3RN3LSqared', 'NIntersect', 'Intersect']
 # functions_to_keep_mean = ['NK3RN3LSQRT', 'K3RN3L', 'NIntersect', 'Intersect']
+
+# 10%
+functions_to_keep_max = ['K3RN3LSQRT', 'NK3RN3LSQRT', 'NIntersect', 'Intersect']
+functions_to_keep_mean = ['K3RN3LSQRT', 'NK3RN3LSQRT', 'NIntersect', 'Intersect']
+
+# 15%
+# functions_to_keep_max = ['K3RN3LSQRT', 'NK3RN3LSQRT', 'NPresence', 'Intersect']
+# functions_to_keep_mean = ['K3RN3L', 'NK3RN3LSQRT', 'NIntersect', 'Intersect']
+#
+# 20%
+# functions_to_keep_max = ['K3RN3L', 'NK3RN3LSQRT', 'Intersect', 'Presence']
+# functions_to_keep_mean = ['K3RN3LSQRT', 'NK3RN3LSQRT', 'NIntersect', 'Intersect']
 
 if is_max:
     mask_functions_to_keep = formatted_data['function'].isin(functions_to_keep_max)
