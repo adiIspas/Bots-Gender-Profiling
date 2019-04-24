@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 
 language = sys.argv[1]
 pred_path = '../results/' + language + '/'
-test_truth_file = '/media/training-datasets/author-profiling/pan19-author-profiling-training-2019-02-18/' + language + '/truth.txt'
+test_truth_file = '../test/' + language + '/truth.txt'
 
 test_labels = dict()
 with open(test_truth_file, 'r') as file:

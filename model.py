@@ -8,6 +8,31 @@ from sklearn.svm import NuSVC
 import rw_operations
 
 
+class Kernel(object):
+    @staticmethod
+    def compute_intersection_kernel(s, t):
+        ret = 0
+
+        if len(s) < len(t):
+            for pair in s.keys():
+                a = s[pair]
+                b = t[pair]
+                if a < b:
+                    ret += a / b
+                else:
+                    ret += b / a
+        else:
+            for pair in t.keys():
+                a = s[pair]
+                b = t[pair]
+                if a < b:
+                    ret += a / b
+                else:
+                    ret += b / a
+
+        return ret
+
+
 class NuSVClassifier(object):
     def __init__(self, language, test_path, miu=0.01, load_kernel=False):
         self.miu = miu
@@ -17,13 +42,12 @@ class NuSVClassifier(object):
         self.kernel_sizes = [1]
         self.kernel_path = './data/processed/' + language + '/kernel/'
 
-        self.train_path = '/media/training-datasets/author-profiling/pan19-author-profiling-training-2019-02-18/' + \
-                          language + '/'
+        self.train_path = './data/raw/' + language + '/'
         self.truth_file_path = self.train_path + 'truth.txt'
         self.train_data_info = rw_operations.get_train_data_info(self.truth_file_path)
         self.train_labels = DataInfo.extract_labels(self.train_data_info)
 
-        self.dataset_test_path = test_path
+        self.dataset_test_path = test_path + language + '/'
         self.test_data_info = rw_operations.get_test_data_info(self.language, self.dataset_test_path)
         self.dataset_size = len(self.train_data_info) + len(self.test_data_info)
 
@@ -66,7 +90,7 @@ class NuSVClassifier(object):
 
         self.computed_kernel /= len(self.kernel_sizes)
 
-    def create_kernel(self, p_gram=1):
+    def create_kernel(self, p_gram=1, method=Kernel.compute_intersection_kernel):
         start_time = time.time()
 
         xml_files_train = [str(self.train_path + entry.author_id + '.xml') for entry in self.train_data_info]
@@ -80,7 +104,7 @@ class NuSVClassifier(object):
         for i in range(self.dataset_size):
             for j in range(i, self.dataset_size):
                 # compute_intersection_kernel should be pass as param method
-                self.kernel[i][j] = Kernel.compute_intersection_kernel(self.cache[i], self.cache[j])
+                self.kernel[i][j] = method(self.cache[i], self.cache[j])
                 self.kernel[j][i] = self.kernel[i][j]
 
             percent = int(ceil((i / self.dataset_size) * 100.0))
@@ -149,28 +173,3 @@ class DataInfo(object):
             labels.append(['bot', 'male', 'female'].index(gender.strip()))
 
         return labels
-
-
-class Kernel(object):
-    @staticmethod
-    def compute_intersection_kernel(s, t):
-        ret = 0
-
-        if len(s) < len(t):
-            for pair in s.keys():
-                a = s[pair]
-                b = t[pair]
-                if a < b:
-                    ret += a / b
-                else:
-                    ret += b / a
-        else:
-            for pair in t.keys():
-                a = s[pair]
-                b = t[pair]
-                if a < b:
-                    ret += a / b
-                else:
-                    ret += b / a
-
-        return ret
